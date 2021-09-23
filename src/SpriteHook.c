@@ -11,12 +11,13 @@ typedef struct {
 } CUSTOM_DATA;
 
 Sprite* hook_ptr = 0;
+extern Sprite* player_ptr;
 void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED;
 
 void START() {
 	CUSTOM_DATA* data = (CUSTOM_DATA*)THIS->custom_data;
 	data->dist = 0;
-	data->ang = scroll_target->mirror == NO_MIRROR ? -32 : 128 + 32;
+	data->ang = player_ptr->mirror == NO_MIRROR ? -32 : 128 + 32;
 	data->hooked = 0;
 	hook_ptr = THIS;
 }
@@ -35,7 +36,7 @@ void UPDATE() {
 			tmp_x.w = COS(data->ang) * radius.w;
 			tmp_y.w = SIN(data->ang) * radius.w;
 
-			if(TranslateSprite(THIS, scroll_target->x + (INT8)tmp_x.h - THIS->x, scroll_target->y + (INT8)tmp_y.h - THIS-> y)) {
+			if(TranslateSprite(THIS, player_ptr->x + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y)) {
 				HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 				data->hooked = 1;
 			}

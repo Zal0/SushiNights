@@ -6,6 +6,8 @@
 #include "Scroll.h"
 #include "Print.h"
 
+Sprite* player_ptr;
+
 //Walk
 fixed decimal_y;
 fixed accel_y;
@@ -36,7 +38,7 @@ void SetPlayerState(PLAYER_STATE state) {
 
 	switch(player_state) {
 		case STATE_HOOKED:
-			SetSpriteAnim(scroll_target, anim_hooked, 6);
+			SetSpriteAnim(player_ptr, anim_hooked, 6);
 			break;
 	}
 }
@@ -53,6 +55,8 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 
 void UPDATE();
 void START() {
+	player_ptr = THIS;
+
 	SetPlayerState(STATE_WALKING);
 	hook_radius.w = 80;
 	hook_ang.w = 0;
@@ -88,8 +92,7 @@ void UpdateWalk() {
 		}
 	} else {
 		jump_done = 0;
-		if((INT16)accel_y.w < 0)
-		{
+		if((INT16)accel_y.w < 0) {
 			accel_y.w = 0;
 		}
 	}
@@ -115,7 +118,6 @@ void UpdateHooked() {
 	fixed tmp_x, tmp_y;
 	UINT8 ang = hook_ang.h;
 	
-
 	if(KEY_PRESSED(J_UP)){
 		if(hook_radius.w > 16) {
 			hook_radius.w -= 1;
@@ -126,16 +128,19 @@ void UpdateHooked() {
 
 	//swing
 	if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
-		hook_speed -= 10;
+		hook_speed -= 20;
 	if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
-		hook_speed += 10;
+		hook_speed += 20;
 
 	//drag
 	hook_speed -=  hook_speed >> 7;
 
 	hook_speed += (hook_ang.h > 128) ? 20 : -20;
-	hook_ang.w += hook_speed ;
+#define MAX_SPEED 1000
+	if(hook_speed > MAX_SPEED) hook_speed = MAX_SPEED;
+	if(hook_speed < -MAX_SPEED) hook_speed = -MAX_SPEED;
 
+	hook_ang.w += hook_speed ;
 
 	tmp_x.w = SIN(hook_ang.h) * hook_radius.w;
 	tmp_y.w = COS(hook_ang.h) * hook_radius.w;
