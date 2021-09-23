@@ -116,14 +116,19 @@ void UpdateWalk() {
 
 void UpdateHooked() {
 	fixed tmp_x, tmp_y;
+	INT16 new_x, new_y;
 	UINT8 ang = hook_ang.h;
+	INT8 rad_incr = 0;
+	fixed cached_ang;
 	
 	if(KEY_PRESSED(J_UP)){
 		if(hook_radius.w > 16) {
+			rad_incr = -1;
 			hook_radius.w -= 1;
 		}
 	} else if(KEY_PRESSED(J_DOWN)){
 		hook_radius.w += 1;
+		rad_incr = 1;
 	}
 
 	//swing
@@ -133,20 +138,31 @@ void UpdateHooked() {
 		hook_speed += 20;
 
 	//drag
-	hook_speed -=  hook_speed >> 7;
+	hook_speed -= hook_speed >> 7;
 
 	hook_speed += (hook_ang.h > 128) ? 20 : -20;
 #define MAX_SPEED 1000
 	if(hook_speed > MAX_SPEED) hook_speed = MAX_SPEED;
 	if(hook_speed < -MAX_SPEED) hook_speed = -MAX_SPEED;
 
+	cached_ang = hook_ang;
 	hook_ang.w += hook_speed ;
 
 	tmp_x.w = SIN(hook_ang.h) * hook_radius.w;
 	tmp_y.w = COS(hook_ang.h) * hook_radius.w;
 
-	THIS->x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
-	THIS->y = hook_y + (INT8)tmp_y.h;
+	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
+	new_y = hook_y + (INT8)tmp_y.h;
+	if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
+		hook_speed = -hook_speed;
+		hook_radius.w -= rad_incr; //Cancel radius increment
+		hook_ang = cached_ang;
+	}
+
+	if(KEY_PRESSED(J_A)) {
+		SetPlayerState(STATE_WALKING);
+		SpriteManagerRemoveSprite(hook_ptr);
+	}
 }
 
 void UPDATE() {
