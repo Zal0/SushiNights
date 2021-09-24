@@ -71,6 +71,14 @@ void START() {
 	UPDATE();
 }
 
+void Jump() {
+	if(!falling && !jump_done) {
+		accel_y.w = (UINT16)-900;
+		falling = 1;
+		jump_done = 1;
+	}
+}
+
 void UpdateWalk() {
 	if(KEY_PRESSED(J_LEFT)){
 		TranslateSprite(THIS, -1, 0);
@@ -85,11 +93,7 @@ void UpdateWalk() {
 	}
 
 	if(KEY_PRESSED(J_A)){
-		if(!falling && !jump_done) {
-			accel_y.w = (UINT16)-900;
-			falling = 1;
-			jump_done = 1;
-		}
+		Jump();
 	} else {
 		jump_done = 0;
 		if((INT16)accel_y.w < 0) {
@@ -161,6 +165,9 @@ void UpdateHooked() {
 
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_WALKING);
+		jump_done = 0;
+		falling = 0;
+		Jump();
 		SpriteManagerRemoveSprite(hook_ptr);
 	}
 }
