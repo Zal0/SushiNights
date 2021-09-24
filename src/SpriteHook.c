@@ -72,7 +72,7 @@ void UPDATE() {
 			tmp_x.w = COS(data->ang) * radius.w;
 			tmp_y.w = SIN(data->ang) * radius.w;
 
-			if(TranslateSprite(THIS, player_ptr->x + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y)) {
+			if(TranslateSprite(THIS, player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y)) {
 				HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 				data->hooked = 1;
 			}

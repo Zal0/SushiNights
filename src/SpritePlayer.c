@@ -10,22 +10,25 @@ Sprite* player_ptr;
 
 //Walk
 fixed decimal_y;
-fixed accel_y;
+INT16 speed_y;
 UINT8 falling;
 UINT8 jump_done;
 extern Sprite* hook_ptr;
 
 //Hooked
 fixed hook_radius;
-//UINT8 frame = 0;
-//fixed max_ang;
 UINT16 hook_x, hook_y;
 fixed hook_ang;
 INT16 hook_speed;
 
+//Flying
+fixed decimal_x;
+INT16 speed_x;
+
 typedef enum {
 	STATE_WALKING,
-	STATE_HOOKED
+	STATE_HOOKED,
+	STATE_FLYING
 } PLAYER_STATE;
 PLAYER_STATE player_state = STATE_WALKING;
 
@@ -38,6 +41,8 @@ void SetPlayerState(PLAYER_STATE state) {
 
 	switch(player_state) {
 		case STATE_HOOKED:
+			speed_x = 0;
+			speed_y = 0;
 			SetSpriteAnim(player_ptr, anim_hooked, 6);
 			break;
 	}
@@ -65,7 +70,7 @@ void START() {
 	hook_y = 68;
 
 	decimal_y.w = 0;
-	accel_y.w = 0;
+	speed_y = 0;
 	falling = 1;
 	jump_done = 0;
 	UPDATE();
@@ -73,7 +78,7 @@ void START() {
 
 void Jump() {
 	if(!falling && !jump_done) {
-		accel_y.w = (UINT16)-900;
+		speed_y = -900;
 		falling = 1;
 		jump_done = 1;
 	}
@@ -96,21 +101,17 @@ void UpdateWalk() {
 		Jump();
 	} else {
 		jump_done = 0;
-		if((INT16)accel_y.w < 0) {
-			accel_y.w = 0;
+		if(speed_y < 0) {
+			speed_y = 0;
 		}
 	}
 
-	if(!hook_ptr && KEY_PRESSED(J_B)) {
-		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
-	}
-
-	accel_y.w += 30;
-	decimal_y.w += accel_y.w;
+	speed_y += 30;
+	decimal_y.w += speed_y;
 	if(decimal_y.h) {
 		if(TranslateSprite(THIS, 0, decimal_y.h) != 0) {
+			speed_y = 0;
 			if((INT8)decimal_y.h > 0) {
-				accel_y.w = 0;
 				falling = 0;
 			}
 		}
@@ -157,19 +158,43 @@ void UpdateHooked() {
 
 	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
 	new_y = hook_y + (INT8)tmp_y.h;
-	if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
-		hook_speed = -hook_speed;
-		hook_radius.w -= rad_incr; //Cancel radius increment
-		hook_ang = cached_ang;
-	}
 
 	if(KEY_PRESSED(J_A)) {
-		SetPlayerState(STATE_WALKING);
-		jump_done = 0;
-		falling = 0;
-		Jump();
+		SetPlayerState(STATE_FLYING);
+		speed_x = (new_x - THIS->x) << 8;
+		//speed_y = ((new_y - THIS->y) << 8) - 900;
+		speed_y = -900;
+		decimal_x.w = 0;
+		decimal_y.w = 0;
+		
 		SpriteManagerRemoveSprite(hook_ptr);
+	} else {
+		if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
+			hook_speed = -hook_speed; //Bounce
+			hook_radius.w -= rad_incr; //Cancel radius increment
+			hook_ang = cached_ang; //Canel ang
+		}
 	}
+}
+
+void UpdateFlying() {
+	speed_y += 30;
+
+	decimal_x.w += speed_x;
+	decimal_y.w += speed_y;
+
+	if(TranslateSprite(THIS, decimal_x.h, 0) != 0) {
+		speed_x = -speed_x;
+	}
+	
+	if(TranslateSprite(THIS, 0, decimal_y.h) != 0) {
+		if((INT8)decimal_y.h > 0) {
+			SetPlayerState(STATE_WALKING);
+		}
+		speed_y = 0;
+	}
+	decimal_x.h = 0;
+	decimal_y.h = 0;
 }
 
 void UPDATE() {
@@ -180,6 +205,13 @@ void UPDATE() {
 		case STATE_HOOKED:
 			UpdateHooked();
 			break;
+		case STATE_FLYING:
+			UpdateFlying();
+			break;
+	}
+
+	if(!hook_ptr && KEY_PRESSED(J_B)) {
+		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
 	}
 }
 
