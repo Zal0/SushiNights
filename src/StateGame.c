@@ -10,9 +10,13 @@ IMPORT_TILES(font);
 
 UINT8 coll_tiles[] = {1, 0};
 
+void InitRope() BANKED;
+
 void START() {
 	scroll_target = SpriteManagerAdd(SpritePlayer, 50, 50);
 	InitScroll(BANK(map), &map, coll_tiles, 0);
+
+	InitRope();
 
 	INIT_CONSOLE(font, 3, 2);
 }
