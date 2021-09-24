@@ -34,7 +34,7 @@ void InitRope() BANKED {
 void START() {
 	CUSTOM_DATA* data = (CUSTOM_DATA*)THIS->custom_data;
 	data->dist = 0;
-	data->ang = player_ptr->mirror == NO_MIRROR ? -32 : 128 + 32;
+	data->ang = player_ptr->mirror == NO_MIRROR ? -40 : 128 + 40;
 	data->hooked = 0;
 	hook_ptr = THIS;
 }
@@ -76,8 +76,8 @@ void UPDATE() {
 			coll_tile = TranslateSprite(THIS, player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y);
 			if(coll_tile) {
 				if(coll_tile == 1) {
-				HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
-				data->hooked = 1;
+					HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
+					data->hooked = 1;
 				} else {
 					if(data->dist < 64) {
 						data->dist = 128 - data->dist;

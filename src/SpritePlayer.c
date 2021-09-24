@@ -11,7 +11,6 @@ Sprite* player_ptr;
 //Walk
 fixed decimal_y;
 INT16 speed_y;
-UINT8 falling;
 UINT8 jump_done;
 extern Sprite* hook_ptr;
 
@@ -24,6 +23,8 @@ INT16 hook_speed;
 //Flying
 fixed decimal_x;
 INT16 speed_x;
+UINT8 check_key_released_on_jump;
+UINT8 bounce_on_coll;
 
 typedef enum {
 	STATE_WALKING,
@@ -34,16 +35,31 @@ PLAYER_STATE player_state = STATE_WALKING;
 
 const UINT8 anim_idle[] = {1, 0};
 const UINT8 anim_walk[] = {2, 0, 1};
+const UINT8 anim_jump[] = {1, 1};
 const UINT8 anim_hooked[] = {1, 2};
  
 void SetPlayerState(PLAYER_STATE state) {
 	player_state = state;
 
 	switch(player_state) {
+		case STATE_WALKING:
+			jump_done = KEY_PRESSED(J_A);
+			break;
+
 		case STATE_HOOKED:
 			speed_x = 0;
 			speed_y = 0;
 			SetSpriteAnim(player_ptr, anim_hooked, 6);
+			break;
+
+		case STATE_FLYING:
+			speed_x = 0;
+			speed_y = 0;
+			decimal_x.w = 0;
+			decimal_y.w = 0;
+			check_key_released_on_jump = 0;
+			bounce_on_coll = 1;
+			SetSpriteAnim(player_ptr, anim_jump, 6);
 			break;
 	}
 }
@@ -71,25 +87,22 @@ void START() {
 
 	decimal_y.w = 0;
 	speed_y = 0;
-	falling = 1;
 	jump_done = 0;
+	
+	decimal_x.w = 0;
+	speed_x = 0;
 	UPDATE();
 }
 
-void Jump() {
-	if(!falling && !jump_done) {
-		speed_y = -900;
-		falling = 1;
-		jump_done = 1;
-	}
-}
-
 void UpdateWalk() {
+	INT8 desp_x = 0;
 	if(KEY_PRESSED(J_LEFT)){
+		desp_x = -1;
 		TranslateSprite(THIS, -1, 0);
 		THIS->mirror = V_MIRROR;
 		SetSpriteAnim(THIS, anim_walk, 20);
 	} else if(KEY_PRESSED(J_RIGHT)){
+		desp_x = 1;
 		TranslateSprite(THIS, 1, 0);
 		THIS->mirror = NO_MIRROR;
 		SetSpriteAnim(THIS, anim_walk, 20);
@@ -98,24 +111,21 @@ void UpdateWalk() {
 	}
 
 	if(KEY_PRESSED(J_A)){
-		Jump();
+		if(!jump_done) {
+			SetPlayerState(STATE_FLYING);
+			speed_x = desp_x << 8;
+			speed_y = -900;
+			check_key_released_on_jump = 1;
+			bounce_on_coll = 0;
+		}
 	} else {
 		jump_done = 0;
-		if(speed_y < 0) {
-			speed_y = 0;
-		}
 	}
 
-	speed_y += 30;
-	decimal_y.w += speed_y;
-	if(decimal_y.h) {
-		if(TranslateSprite(THIS, 0, decimal_y.h) != 0) {
-			speed_y = 0;
-			if((INT8)decimal_y.h > 0) {
-				falling = 0;
-			}
-		}
-		decimal_y.h = 0;
+	if(TranslateSprite(THIS, 0, 1) == 0) {
+		SetPlayerState(STATE_FLYING);
+		bounce_on_coll = 0;
+		speed_x = desp_x << 8;
 	}
 }
 
@@ -162,10 +172,8 @@ void UpdateHooked() {
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_FLYING);
 		speed_x = (new_x - THIS->x) << 8;
-		//speed_y = ((new_y - THIS->y) << 8) - 900;
-		speed_y = -900;
-		decimal_x.w = 0;
-		decimal_y.w = 0;
+		speed_y = ((new_y - THIS->y) << 8) << 1;
+		//speed_y = -900;
 		
 		SpriteManagerRemoveSprite(hook_ptr);
 	} else {
@@ -178,13 +186,33 @@ void UpdateHooked() {
 }
 
 void UpdateFlying() {
-	speed_y += 30;
+	if(speed_y < 900)
+		speed_y += 30;
+
+	if(KEY_PRESSED(J_LEFT)) {
+		if(speed_x > -256) {
+			speed_x -= THIS->mirror == NO_MIRROR ? 20 : 40;
+		}
+	} else if(KEY_PRESSED(J_RIGHT)) {
+		if(speed_x < 256) {
+			speed_x += THIS->mirror == NO_MIRROR ? 40 : 20;
+		}
+	} else {
+		 speed_x -= speed_x >> 4;
+	}
+	if(check_key_released_on_jump){
+		if(!KEY_PRESSED(J_A) && speed_y < 0) {
+			speed_y = 0;
+		}
+	}
 
 	decimal_x.w += speed_x;
 	decimal_y.w += speed_y;
 
 	if(TranslateSprite(THIS, decimal_x.h, 0) != 0) {
-		speed_x = -speed_x;
+		if(bounce_on_coll) {
+			speed_x = -speed_x;
+		}
 	}
 	
 	if(TranslateSprite(THIS, 0, decimal_y.h) != 0) {
