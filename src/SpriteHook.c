@@ -62,6 +62,7 @@ void UPDATE() {
 	fixed radius;
 	fixed tmp_x;
 	fixed tmp_y;
+	UINT8 coll_tile;
 	CUSTOM_DATA* data = (CUSTOM_DATA*)THIS->custom_data;
 	
 	if(!data->hooked) {
@@ -72,9 +73,16 @@ void UPDATE() {
 			tmp_x.w = COS(data->ang) * radius.w;
 			tmp_y.w = SIN(data->ang) * radius.w;
 
-			if(TranslateSprite(THIS, player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y)) {
+			coll_tile = TranslateSprite(THIS, player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y);
+			if(coll_tile) {
+				if(coll_tile == 1) {
 				HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 				data->hooked = 1;
+				} else {
+					if(data->dist < 64) {
+						data->dist = 128 - data->dist;
+					}
+				}
 			}
 		} else {
 			SpriteManagerRemove(THIS_IDX);

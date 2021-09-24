@@ -8,7 +8,7 @@
 IMPORT_MAP(map);
 IMPORT_TILES(font);
 
-UINT8 coll_tiles[] = {1, 0};
+UINT8 coll_tiles[] = {1, 2, 0};
 
 void InitRope() BANKED;
 
