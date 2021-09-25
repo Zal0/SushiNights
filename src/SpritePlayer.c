@@ -36,11 +36,12 @@ typedef enum {
 } PLAYER_STATE;
 PLAYER_STATE player_state = STATE_WALKING;
 
-const UINT8 anim_idle[] = {1, 0};
-const UINT8 anim_walk[] = {2, 0, 1};
-const UINT8 anim_jump[] = {1, 1};
-const UINT8 anim_hooked[] = {1, 2};
- 
+const UINT8 anim_idle[] = {3, 0,1,2};
+const UINT8 anim_walk[] = {4, 3, 4,5,6};
+const UINT8 anim_jump[] = {1, 6};
+const UINT8 anim_hooked[] = {1, 6};
+const UINT8 ANIMATION_SPEED = 16; 
+
 void SetPlayerState(PLAYER_STATE state) {
 	player_state = state;
 
@@ -51,7 +52,7 @@ void SetPlayerState(PLAYER_STATE state) {
 			break;
 
 		case STATE_HOOKED:
-			SetSpriteAnim(player_ptr, anim_hooked, 6);
+			SetSpriteAnim(player_ptr, anim_hooked, ANIMATION_SPEED);
 			break;
 
 		case STATE_FLYING:
@@ -61,7 +62,7 @@ void SetPlayerState(PLAYER_STATE state) {
 			decimal_y.w = 0;
 			check_key_released_on_jump = 0;
 			bounce_on_coll = 1;
-			SetSpriteAnim(player_ptr, anim_jump, 6);
+			SetSpriteAnim(player_ptr, anim_jump, ANIMATION_SPEED);
 			break;
 	}
 }
@@ -120,7 +121,7 @@ void UpdateWalk() {
 	if(speed_x) {
 		THIS->mirror = speed_x > 0 ? NO_MIRROR : V_MIRROR;
 	}
-	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, 16);
+	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, ANIMATION_SPEED);
 	
 	if(KEY_PRESSED(J_A)){
 		if(!jump_done) {
