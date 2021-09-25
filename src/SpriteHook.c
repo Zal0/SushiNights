@@ -10,6 +10,7 @@
 extern UINT8 next_oam_idx;
 extern UINT8* oam;
 UINT8 hook_rope[12];
+extern UINT8 rope_length;
 
 typedef struct {
 	UINT8 dist;
@@ -37,6 +38,7 @@ void START() {
 	data->dist = 0;
 	data->ang = player_ptr->mirror == NO_MIRROR ? -40 : 128 + 40;
 	data->hooked = 0;
+
 	hook_ptr = THIS;
 }
 
@@ -68,7 +70,7 @@ void UPDATE() {
 	
 	if(!data->hooked) {
 		data->dist += 4;
-		radius.w = (INT8)SIN(data->dist);
+		radius.w = ((SIN(data->dist) * rope_length) >> 6);
 
 		if((INT16)radius.w >= 0) {
 			tmp_x.w = COS(data->ang) * radius.w;
@@ -93,6 +95,15 @@ void UPDATE() {
 	}
 
 	DrawRope();
+}
+
+void RetireHook(Sprite* hook, INT8 ang) BANKED {
+	CUSTOM_DATA* data = (CUSTOM_DATA*)hook->custom_data;
+	data->hooked = 0;
+	data->ang = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
+	if(data->dist < 64) {
+		data->dist = 128 - data->dist;
+	}
 }
 
 void DESTROY() {

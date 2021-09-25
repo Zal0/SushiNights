@@ -8,6 +8,9 @@
 
 Sprite* player_ptr;
 extern Sprite* hook_ptr;
+extern UINT8 rope_length;
+
+void RetireHook(Sprite* hook, INT8 ang) BANKED;
 
 //Walk
 UINT8 jump_done;
@@ -159,6 +162,8 @@ void UpdateHooked() {
 		}
 	} else if(KEY_PRESSED(J_DOWN)){
 		hook_radius.w += 1;
+		if(hook_radius.w > (rope_length << 1))
+			hook_radius.w = (rope_length << 1);
 		rad_incr = 1;
 	}
 
@@ -187,9 +192,13 @@ void UpdateHooked() {
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_FLYING);
 		speed_x = (new_x - THIS->x) << 8;
-		speed_y = ((new_y - THIS->y) << 8); //Multiplying by 2 gives the effect of the character jumping
+		speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
+		if(speed_y < -JUMP_SPEED)
+			speed_y = -JUMP_SPEED;
 		
-		SpriteManagerRemoveSprite(hook_ptr);
+		//SpriteManagerRemoveSprite(hook_ptr);
+		//hook_ang.h = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
+		RetireHook(hook_ptr, hook_ang.h);
 	} else {
 		if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
 			hook_speed = -hook_speed; //Bounce
