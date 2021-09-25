@@ -7,12 +7,10 @@
 #include "Print.h"
 
 Sprite* player_ptr;
+extern Sprite* hook_ptr;
 
 //Walk
-fixed decimal_y;
-INT16 speed_y;
 UINT8 jump_done;
-extern Sprite* hook_ptr;
 
 //Hooked
 fixed hook_radius;
@@ -21,10 +19,12 @@ fixed hook_ang;
 INT16 hook_speed;
 
 //Flying
-fixed decimal_x;
 INT16 speed_x;
-UINT8 check_key_released_on_jump;
-UINT8 bounce_on_coll;
+INT16 speed_y;
+fixed decimal_x;
+fixed decimal_y;
+UINT8 check_key_released_on_jump; //when J_A is no longer pressed, and speed going up reset speed to stop jump
+UINT8 bounce_on_coll; //Bouncing after making a jump doesn't look good
 
 typedef enum {
 	STATE_WALKING,
@@ -47,8 +47,6 @@ void SetPlayerState(PLAYER_STATE state) {
 			break;
 
 		case STATE_HOOKED:
-			speed_x = 0;
-			speed_y = 0;
 			SetSpriteAnim(player_ptr, anim_hooked, 6);
 			break;
 
@@ -94,6 +92,8 @@ void START() {
 	UPDATE();
 }
 
+#define JUMP_SPEED 900
+
 void UpdateWalk() {
 	INT8 desp_x = 0;
 	if(KEY_PRESSED(J_LEFT)){
@@ -114,7 +114,7 @@ void UpdateWalk() {
 		if(!jump_done) {
 			SetPlayerState(STATE_FLYING);
 			speed_x = desp_x << 8;
-			speed_y = -900;
+			speed_y = -JUMP_SPEED;
 			check_key_released_on_jump = 1;
 			bounce_on_coll = 0;
 		}
@@ -122,12 +122,19 @@ void UpdateWalk() {
 		jump_done = 0;
 	}
 
+	//Check falling
 	if(TranslateSprite(THIS, 0, 1) == 0) {
 		SetPlayerState(STATE_FLYING);
 		bounce_on_coll = 0;
 		speed_x = desp_x << 8;
 	}
 }
+
+
+#define HOOK_SWING_SPEED 20
+#define HOOK_SPEED 20
+#define MAX_HOOK_SPEED 1000
+#define HOOK_DRAG (hook_speed >> 7)
 
 void UpdateHooked() {
 	fixed tmp_x, tmp_y;
@@ -148,22 +155,21 @@ void UpdateHooked() {
 
 	//swing
 	if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
-		hook_speed -= 20;
+		hook_speed -= HOOK_SWING_SPEED;
 	if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
-		hook_speed += 20;
+		hook_speed += HOOK_SWING_SPEED;
 
 	//drag
-	hook_speed -= hook_speed >> 7;
+	hook_speed -= HOOK_DRAG;
 
-	hook_speed += (hook_ang.h > 128) ? 20 : -20;
-#define MAX_SPEED 1000
-	if(hook_speed > MAX_SPEED) hook_speed = MAX_SPEED;
-	if(hook_speed < -MAX_SPEED) hook_speed = -MAX_SPEED;
+	hook_speed += (hook_ang.h > 128) ? HOOK_SPEED : -HOOK_SPEED;
+	if(hook_speed > MAX_HOOK_SPEED) hook_speed = MAX_HOOK_SPEED;
+	if(hook_speed < -MAX_HOOK_SPEED) hook_speed = -MAX_HOOK_SPEED;
 
 	cached_ang = hook_ang;
 	hook_ang.w += hook_speed ;
 
-	tmp_x.w = SIN(hook_ang.h) * hook_radius.w;
+	tmp_x.w = SIN(hook_ang.h) * hook_radius.w; //using SIN instead of cos because I am rotating the axis so 0 points down, 64 points right and -64 points left
 	tmp_y.w = COS(hook_ang.h) * hook_radius.w;
 
 	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
@@ -172,8 +178,7 @@ void UpdateHooked() {
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_FLYING);
 		speed_x = (new_x - THIS->x) << 8;
-		speed_y = ((new_y - THIS->y) << 8) << 1;
-		//speed_y = -900;
+		speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
 		
 		SpriteManagerRemoveSprite(hook_ptr);
 	} else {
@@ -185,21 +190,30 @@ void UpdateHooked() {
 	}
 }
 
+#define MAX_Y_SPEED 900
+#define MAX_X_SPEED 256
+#define GRAVITY 30
+#define X_SPEED_INCREMENT 40
+#define X_SPEED_INCREMENT_OPPOSITE 20
+#define DRAG (speed_x >> 4)
+
 void UpdateFlying() {
-	if(speed_y < 900)
-		speed_y += 30;
+	if(speed_y < MAX_Y_SPEED)
+		speed_y += GRAVITY;
 
 	if(KEY_PRESSED(J_LEFT)) {
-		if(speed_x > -256) {
-			speed_x -= THIS->mirror == NO_MIRROR ? 20 : 40;
+		if(speed_x > -MAX_X_SPEED) {
+			speed_x -= THIS->mirror == NO_MIRROR ? X_SPEED_INCREMENT_OPPOSITE : X_SPEED_INCREMENT;
 		}
 	} else if(KEY_PRESSED(J_RIGHT)) {
-		if(speed_x < 256) {
-			speed_x += THIS->mirror == NO_MIRROR ? 40 : 20;
+		if(speed_x < MAX_X_SPEED) {
+			speed_x += THIS->mirror == NO_MIRROR ? X_SPEED_INCREMENT : X_SPEED_INCREMENT_OPPOSITE;
 		}
-	} else {
-		 speed_x -= speed_x >> 4;
-	}
+	} 
+	
+	//Drag
+	speed_x -= DRAG;
+
 	if(check_key_released_on_jump){
 		if(!KEY_PRESSED(J_A) && speed_y < 0) {
 			speed_y = 0;
