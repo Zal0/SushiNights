@@ -18,6 +18,7 @@ typedef struct {
 	INT8 ang;
 	UINT8 hooked;
 	UINT8 max_length;
+	UINT8 done;
 } CUSTOM_DATA;
 
 Sprite* hook_ptr = 0;
@@ -45,6 +46,7 @@ void START() {
 	}
 	data->hooked = 0;
 	data->max_length = rope_length;
+	data->done = 0;
 
 	hook_ptr = THIS;
 }
@@ -85,7 +87,7 @@ void UPDATE() {
 
 			THIS->x = player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h;
 			THIS->y = player_ptr->y + (INT8)tmp_y.h;
-			if(data->dist < 64) { //ignore collision when going back
+			if(!data->done) { 
 				coll_tile = GetScrollTile(THIS->x >> 3, THIS->y >> 3);
 				if(coll_tile) {
 					if(coll_tile == 1 || coll_tile == 3) {
@@ -111,6 +113,7 @@ void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED {
 	data->hooked = 0;
 	data->ang = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
 	data->max_length = radius;
+	data->done = 1;
 	if(data->dist < 64) {
 		data->dist = 128 - data->dist;
 	}
