@@ -7,12 +7,13 @@
 #include "Print.h"
 
 Sprite* player_ptr;
+extern Sprite* hook_ptr;
+extern UINT8 rope_length;
+
+void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED;
 
 //Walk
-fixed decimal_y;
-INT16 speed_y;
 UINT8 jump_done;
-extern Sprite* hook_ptr;
 
 //Hooked
 fixed hook_radius;
@@ -21,10 +22,12 @@ fixed hook_ang;
 INT16 hook_speed;
 
 //Flying
-fixed decimal_x;
 INT16 speed_x;
-UINT8 check_key_released_on_jump;
-UINT8 bounce_on_coll;
+INT16 speed_y;
+fixed decimal_x;
+fixed decimal_y;
+UINT8 check_key_released_on_jump; //when J_A is no longer pressed, and speed going up reset speed to stop jump
+UINT8 bounce_on_coll; //Bouncing after making a jump doesn't look good
 
 typedef enum {
 	STATE_WALKING,
@@ -45,18 +48,17 @@ void SetPlayerState(PLAYER_STATE state) {
 	switch(player_state) {
 		case STATE_WALKING:
 			jump_done = KEY_PRESSED(J_A);
+			bounce_on_coll = 0;
 			break;
 
 		case STATE_HOOKED:
-			speed_x = 0;
-			speed_y = 0;
 			SetSpriteAnim(player_ptr, anim_hooked, ANIMATION_SPEED);
 			break;
 
 		case STATE_FLYING:
-			speed_x = 0;
+			//speed_x = 0;
 			speed_y = 0;
-			decimal_x.w = 0;
+			//decimal_x.w = 0;
 			decimal_y.w = 0;
 			check_key_released_on_jump = 0;
 			bounce_on_coll = 1;
@@ -75,47 +77,57 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 	SetPlayerState(STATE_HOOKED);
 }
 
-void UPDATE();
 void START() {
 	player_ptr = THIS;
-
 	SetPlayerState(STATE_WALKING);
-	hook_radius.w = 80;
-	hook_ang.w = 0;
-	hook_speed = 0;
-	hook_x = 68;
-	hook_y = 68;
-
-	decimal_y.w = 0;
-	speed_y = 0;
-	jump_done = 0;
-	
-	decimal_x.w = 0;
-	speed_x = 0;
-	UPDATE();
 }
 
-void UpdateWalk() {
-	INT8 desp_x = 0;
-	if(KEY_PRESSED(J_LEFT)){
-		desp_x = -1;
-		TranslateSprite(THIS, -1, 0);
-		THIS->mirror = V_MIRROR;
-		SetSpriteAnim(THIS, anim_walk, ANIMATION_SPEED);
-	} else if(KEY_PRESSED(J_RIGHT)){
-		desp_x = 1;
-		TranslateSprite(THIS, 1, 0);
-		THIS->mirror = NO_MIRROR;
-		SetSpriteAnim(THIS, anim_walk, ANIMATION_SPEED);
-	} else {
-		SetSpriteAnim(THIS, anim_idle, ANIMATION_SPEED);
-	}
 
+#define MAX_X_SPEED 256
+#define X_SPEED_INCREMENT 40
+#define X_SPEED_INCREMENT_OPPOSITE 20
+#define DRAG (speed_x >> 3)
+
+void HorizontalMove() {
+	if(KEY_PRESSED(J_LEFT)) {
+		if(speed_x > -MAX_X_SPEED) {
+			speed_x -= THIS->mirror == NO_MIRROR ? X_SPEED_INCREMENT_OPPOSITE : X_SPEED_INCREMENT;
+		}
+	} else if(KEY_PRESSED(J_RIGHT)) {
+		if(speed_x < MAX_X_SPEED) {
+			speed_x += THIS->mirror == NO_MIRROR ? X_SPEED_INCREMENT : X_SPEED_INCREMENT_OPPOSITE;
+		}
+	} else if(DRAG == 0) {
+		speed_x = 0;
+	}
+	
+	//Drag
+	speed_x -= DRAG;
+
+	decimal_x.w += speed_x;
+
+	if(TranslateSprite(THIS, decimal_x.h, 0) != 0) {
+		speed_x = bounce_on_coll ? -speed_x : 0;
+	}
+	
+	decimal_x.h = 0;
+}
+
+#define JUMP_SPEED 900
+
+void UpdateWalk() {
+	HorizontalMove();
+
+	if(speed_x) {
+		THIS->mirror = speed_x > 0 ? NO_MIRROR : V_MIRROR;
+	}
+	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, ANIMATION_SPEED);
+	
 	if(KEY_PRESSED(J_A)){
 		if(!jump_done) {
 			SetPlayerState(STATE_FLYING);
-			speed_x = desp_x << 8;
-			speed_y = -900;
+			//speed_x = desp_x << 8;
+			speed_y = -JUMP_SPEED;
 			check_key_released_on_jump = 1;
 			bounce_on_coll = 0;
 		}
@@ -123,12 +135,19 @@ void UpdateWalk() {
 		jump_done = 0;
 	}
 
+	//Check falling
 	if(TranslateSprite(THIS, 0, 1) == 0) {
 		SetPlayerState(STATE_FLYING);
 		bounce_on_coll = 0;
-		speed_x = desp_x << 8;
+		//speed_x = desp_x << 8;
 	}
 }
+
+
+#define HOOK_SWING_SPEED 20
+#define HOOK_SPEED 20
+#define MAX_HOOK_SPEED 1000
+#define HOOK_DRAG (hook_speed >> 7)
 
 void UpdateHooked() {
 	fixed tmp_x, tmp_y;
@@ -144,39 +163,45 @@ void UpdateHooked() {
 		}
 	} else if(KEY_PRESSED(J_DOWN)){
 		hook_radius.w += 1;
+		if(hook_radius.w > (rope_length << 1))
+			hook_radius.w = (rope_length << 1);
 		rad_incr = 1;
 	}
 
 	//swing
 	if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
-		hook_speed -= 20;
+		hook_speed -= HOOK_SWING_SPEED;
 	if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
-		hook_speed += 20;
+		hook_speed += HOOK_SWING_SPEED;
 
 	//drag
-	hook_speed -= hook_speed >> 7;
+	hook_speed -= HOOK_DRAG;
 
-	hook_speed += (hook_ang.h > 128) ? 20 : -20;
-#define MAX_SPEED 1000
-	if(hook_speed > MAX_SPEED) hook_speed = MAX_SPEED;
-	if(hook_speed < -MAX_SPEED) hook_speed = -MAX_SPEED;
+	hook_speed += (hook_ang.h > 128) ? HOOK_SPEED : -HOOK_SPEED;
+	if(hook_speed > MAX_HOOK_SPEED) hook_speed = MAX_HOOK_SPEED;
+	if(hook_speed < -MAX_HOOK_SPEED) hook_speed = -MAX_HOOK_SPEED;
 
 	cached_ang = hook_ang;
 	hook_ang.w += hook_speed ;
 
-	tmp_x.w = SIN(hook_ang.h) * hook_radius.w;
+	tmp_x.w = SIN(hook_ang.h) * hook_radius.w; //using SIN instead of cos because I am rotating the axis so 0 points down, 64 points right and -64 points left
 	tmp_y.w = COS(hook_ang.h) * hook_radius.w;
 
 	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
 	new_y = hook_y + (INT8)tmp_y.h;
 
+	THIS->mirror = hook_speed < 0 ? V_MIRROR : NO_MIRROR;
+
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_FLYING);
 		speed_x = (new_x - THIS->x) << 8;
-		speed_y = ((new_y - THIS->y) << 8) << 1;
-		//speed_y = -900;
+		speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
+		if(speed_y < -JUMP_SPEED)
+			speed_y = -JUMP_SPEED;
 		
-		SpriteManagerRemoveSprite(hook_ptr);
+		//SpriteManagerRemoveSprite(hook_ptr);
+		//hook_ang.h = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
+		RetireHook(hook_ptr, hook_ang.h, hook_radius.w >> 1);
 	} else {
 		if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
 			hook_speed = -hook_speed; //Bounce
@@ -186,35 +211,23 @@ void UpdateHooked() {
 	}
 }
 
-void UpdateFlying() {
-	if(speed_y < 900)
-		speed_y += 30;
+#define MAX_Y_SPEED 900
+#define GRAVITY 30
 
-	if(KEY_PRESSED(J_LEFT)) {
-		if(speed_x > -256) {
-			speed_x -= THIS->mirror == NO_MIRROR ? 20 : 40;
-		}
-	} else if(KEY_PRESSED(J_RIGHT)) {
-		if(speed_x < 256) {
-			speed_x += THIS->mirror == NO_MIRROR ? 40 : 20;
-		}
-	} else {
-		 speed_x -= speed_x >> 4;
+void UpdateFlying() {
+	if(speed_y < MAX_Y_SPEED) {
+		speed_y += GRAVITY;
 	}
+
+	HorizontalMove();
+
 	if(check_key_released_on_jump){
 		if(!KEY_PRESSED(J_A) && speed_y < 0) {
 			speed_y = 0;
 		}
 	}
 
-	decimal_x.w += speed_x;
 	decimal_y.w += speed_y;
-
-	if(TranslateSprite(THIS, decimal_x.h, 0) != 0) {
-		if(bounce_on_coll) {
-			speed_x = -speed_x;
-		}
-	}
 	
 	if(TranslateSprite(THIS, 0, decimal_y.h) != 0) {
 		if((INT8)decimal_y.h > 0) {
@@ -245,4 +258,5 @@ void UPDATE() {
 }
 
 void DESTROY() {
+	SetState(StateGame);
 }
