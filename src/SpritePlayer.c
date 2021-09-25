@@ -13,7 +13,6 @@ extern UINT8 rope_length;
 void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED;
 
 //Walk
-UINT8 jump_done;
 
 //Hooked
 fixed hook_radius;
@@ -47,7 +46,6 @@ void SetPlayerState(PLAYER_STATE state) {
 
 	switch(player_state) {
 		case STATE_WALKING:
-			jump_done = KEY_PRESSED(J_A);
 			bounce_on_coll = 0;
 			break;
 
@@ -101,8 +99,8 @@ void HorizontalMove() {
 		speed_x = 0;
 	}
 	
-	//Drag
-	speed_x -= DRAG;
+		//Drag
+		speed_x -= DRAG;
 
 	decimal_x.w += speed_x;
 
@@ -123,17 +121,13 @@ void UpdateWalk() {
 	}
 	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, ANIMATION_SPEED);
 	
-	if(KEY_PRESSED(J_A)){
-		if(!jump_done) {
-			SetPlayerState(STATE_FLYING);
-			//speed_x = desp_x << 8;
-			speed_y = -JUMP_SPEED;
-			check_key_released_on_jump = 1;
-			bounce_on_coll = 0;
-		}
-	} else {
-		jump_done = 0;
-	}
+	if(KEY_TICKED(J_A)){
+		SetPlayerState(STATE_FLYING);
+		//speed_x = desp_x << 8;
+		speed_y = -JUMP_SPEED;
+		check_key_released_on_jump = 1;
+		bounce_on_coll = 0;
+	} 
 
 	//Check falling
 	if(TranslateSprite(THIS, 0, 1) == 0) {
@@ -192,16 +186,14 @@ void UpdateHooked() {
 
 	THIS->mirror = hook_speed < 0 ? V_MIRROR : NO_MIRROR;
 
-	if(KEY_PRESSED(J_A)) {
-		SetPlayerState(STATE_FLYING);
-		speed_x = (new_x - THIS->x) << 8;
-		speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
-		if(speed_y < -JUMP_SPEED)
-			speed_y = -JUMP_SPEED;
+	if(KEY_TICKED(J_A)) {
+			SetPlayerState(STATE_FLYING);
+			speed_x = (new_x - THIS->x) << 8;
+			speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
+			if(speed_y < -JUMP_SPEED)
+				speed_y = -JUMP_SPEED;
 		
-		//SpriteManagerRemoveSprite(hook_ptr);
-		//hook_ang.h = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
-		RetireHook(hook_ptr, hook_ang.h, hook_radius.w >> 1);
+			RetireHook(hook_ptr, hook_ang.h, hook_radius.w >> 1);
 	} else {
 		if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
 			hook_speed = -hook_speed; //Bounce
@@ -252,7 +244,7 @@ void UPDATE() {
 			break;
 	}
 
-	if(!hook_ptr && KEY_PRESSED(J_B)) {
+	if(!hook_ptr && KEY_TICKED(J_B)) {
 		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
 	}
 }
