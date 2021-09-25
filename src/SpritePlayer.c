@@ -72,24 +72,9 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 	SetPlayerState(STATE_HOOKED);
 }
 
-void UPDATE();
 void START() {
 	player_ptr = THIS;
-
 	SetPlayerState(STATE_WALKING);
-	hook_radius.w = 80;
-	hook_ang.w = 0;
-	hook_speed = 0;
-	hook_x = 68;
-	hook_y = 68;
-
-	decimal_y.w = 0;
-	speed_y = 0;
-	jump_done = 0;
-	
-	decimal_x.w = 0;
-	speed_x = 0;
-	UPDATE();
 }
 
 #define JUMP_SPEED 900
