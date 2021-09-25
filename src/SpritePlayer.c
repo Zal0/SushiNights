@@ -184,7 +184,8 @@ void UpdateHooked() {
 	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
 	new_y = hook_y + (INT8)tmp_y.h;
 
-	THIS->mirror = hook_speed < 0 ? V_MIRROR : NO_MIRROR;
+	if(hook_speed > 256) THIS->mirror = NO_MIRROR;
+	else if(hook_speed < -256) THIS->mirror = V_MIRROR;
 
 	if(KEY_TICKED(J_A)) {
 			SetPlayerState(STATE_FLYING);
