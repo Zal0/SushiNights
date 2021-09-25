@@ -4,6 +4,7 @@
 #include "Scroll.h"
 #include "Trig.h"
 #include "ZGBMain.h"
+#include "Scroll.h"
 #include<string.h>
 
 extern UINT8 next_oam_idx;
@@ -73,7 +74,9 @@ void UPDATE() {
 			tmp_x.w = COS(data->ang) * radius.w;
 			tmp_y.w = SIN(data->ang) * radius.w;
 
-			coll_tile = TranslateSprite(THIS, player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h - THIS->x, player_ptr->y + (INT8)tmp_y.h - THIS-> y);
+			THIS->x = player_ptr->x + (player_ptr->coll_w >> 1) + (INT8)tmp_x.h;
+			THIS->y = player_ptr->y + (INT8)tmp_y.h;
+			coll_tile = GetScrollTile(THIS->x >> 3, THIS->y >> 3);
 			if(coll_tile) {
 				if(coll_tile == 1) {
 					HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
