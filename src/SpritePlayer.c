@@ -83,8 +83,8 @@ void START() {
 
 #define MAX_X_SPEED 256
 #define X_SPEED_INCREMENT 40
-#define X_SPEED_INCREMENT_OPPOSITE 20
-#define DRAG (speed_x >> 3)
+#define X_SPEED_INCREMENT_OPPOSITE 10
+#define DRAG (speed_x >> 4)
 
 void HorizontalMove() {
 	if(KEY_PRESSED(J_LEFT)) {
