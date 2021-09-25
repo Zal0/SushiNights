@@ -19,13 +19,14 @@ UINT16 powerups_taken[MAX_POWERUPS + 1];
 void InitRope() BANKED;
 
 void START() {
+	rope_length = 64;
+	memset(powerups_taken, 0, sizeof(powerups_taken));
+	scroll_top_movement_limit = 72;
+
 	scroll_target = SpriteManagerAdd(SpritePlayer, 50, 50);
 	InitScroll(BANK(map), &map, coll_tiles, 0);
 
 	InitRope();
-
-	rope_length = 64;
-	memset(powerups_taken, 0, sizeof(powerups_taken));
 
 	INIT_CONSOLE(font, 3, 2);
 }

@@ -189,6 +189,8 @@ void UpdateHooked() {
 	new_x = hook_x + (INT8)tmp_x.h - (THIS->coll_w >> 1);
 	new_y = hook_y + (INT8)tmp_y.h;
 
+	THIS->mirror = hook_speed < 0 ? V_MIRROR : NO_MIRROR;
+
 	if(KEY_PRESSED(J_A)) {
 		SetPlayerState(STATE_FLYING);
 		speed_x = (new_x - THIS->x) << 8;
@@ -212,8 +214,9 @@ void UpdateHooked() {
 #define GRAVITY 30
 
 void UpdateFlying() {
-	if(speed_y < MAX_Y_SPEED)
+	if(speed_y < MAX_Y_SPEED) {
 		speed_y += GRAVITY;
+	}
 
 	HorizontalMove();
 
@@ -254,4 +257,5 @@ void UPDATE() {
 }
 
 void DESTROY() {
+	SetState(StateGame);
 }

@@ -41,7 +41,7 @@ void START() {
 	if(KEY_PRESSED(J_UP)){
 		data->ang = -64;
 	} else {
-		data->ang = player_ptr->mirror == NO_MIRROR ? -40 : 128 + 40;
+		data->ang = player_ptr->mirror == NO_MIRROR ? -32 : 128 + 32;
 	}
 	data->hooked = 0;
 	data->max_length = rope_length;
@@ -88,7 +88,7 @@ void UPDATE() {
 			if(data->dist < 64) { //ignore collision when going back
 				coll_tile = GetScrollTile(THIS->x >> 3, THIS->y >> 3);
 				if(coll_tile) {
-					if(coll_tile == 1) {
+					if(coll_tile == 1 || coll_tile == 3) {
 						HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 						data->hooked = 1;
 					} else {
