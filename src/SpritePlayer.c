@@ -10,7 +10,7 @@ Sprite* player_ptr;
 extern Sprite* hook_ptr;
 extern UINT8 rope_length;
 
-void RetireHook(Sprite* hook, INT8 ang) BANKED;
+void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED;
 
 //Walk
 UINT8 jump_done;
@@ -198,7 +198,7 @@ void UpdateHooked() {
 		
 		//SpriteManagerRemoveSprite(hook_ptr);
 		//hook_ang.h = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
-		RetireHook(hook_ptr, hook_ang.h);
+		RetireHook(hook_ptr, hook_ang.h, hook_radius.w >> 1);
 	} else {
 		if(TranslateSprite(THIS, new_x - THIS->x, new_y - THIS->y) != 0) {
 			hook_speed = -hook_speed; //Bounce
