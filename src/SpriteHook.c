@@ -89,7 +89,7 @@ void UPDATE() {
 			THIS->y = player_ptr->y + (INT8)tmp_y.h;
 			if(!data->done) { 
 				coll_tile = GetScrollTile(THIS->x >> 3, THIS->y >> 3);
-				if(coll_tile == 1 || coll_tile == 3) {
+				if(coll_tile == 1 || coll_tile == 38) {
 					HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 					data->hooked = 1;
 				} else if (coll_tile == 2){

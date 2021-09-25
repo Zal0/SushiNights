@@ -99,8 +99,8 @@ void HorizontalMove() {
 		speed_x = 0;
 	}
 	
-		//Drag
-		speed_x -= DRAG;
+	//Drag
+	speed_x -= DRAG;
 
 	decimal_x.w += speed_x;
 
