@@ -89,7 +89,7 @@ void UPDATE() {
 			THIS->y = player_ptr->y + (INT8)tmp_y.h;
 			if(!data->done) { 
 				coll_tile = GetScrollTile(THIS->x >> 3, THIS->y >> 3);
-				if(scroll_collisions[coll_tile] == 1 || coll_tile == 38) {
+				if(scroll_collisions[coll_tile] == 1 || coll_tile == 38 || coll_tile == 12 || coll_tile == 14 || coll_tile == 17 || coll_tile == 19 || coll_tile == 21 || coll_tile == 23 || coll_tile == 32 || coll_tile == 34 || coll_tile == 36 || coll_tile == 37) {
 					if (coll_tile == 2){
 						if(data->dist < 64) {
 							data->dist = 128 - data->dist;

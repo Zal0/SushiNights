@@ -37,8 +37,8 @@ PLAYER_STATE player_state = STATE_WALKING;
 
 const UINT8 anim_idle[] = {3, 0,1,2};
 const UINT8 anim_walk[] = {4, 3, 4,5,6};
-const UINT8 anim_jump[] = {1, 6};
-const UINT8 anim_hooked[] = {1, 6};
+const UINT8 anim_jump[] = {1, 7};
+const UINT8 anim_hooked[] = { 3, 7,8,9 };
 const UINT8 ANIMATION_SPEED = 16; 
 
 void SetPlayerState(PLAYER_STATE state) {
