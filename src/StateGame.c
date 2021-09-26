@@ -9,6 +9,22 @@
 IMPORT_MAP(map);
 IMPORT_TILES(font);
 
+#define BANKED_MAP(MAP) {BANK(MAP), &MAP}
+#define LEVELS_END {0, 0}
+
+struct MapInfoBanked {
+	UINT8 bank;
+	struct MapInfo* map;
+};
+
+const struct MapInfoBanked levels[] = {
+	BANKED_MAP(map),
+
+	LEVELS_END
+};
+
+UINT8 current_level = 0;
+
 UINT8 coll_tiles[] = {1, 2,4,5,6,7,12,13,14,15, 0};
 
 UINT8 rope_length;

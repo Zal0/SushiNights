@@ -2,7 +2,10 @@
 #define ZGBMAIN_H
 
 #define STATES \
+_STATE(StateSplashZGB)\
+_STATE(StateSplash)\
 _STATE(StateGame)\
+_STATE(StateGameWin)\
 STATE_DEF_END
 
 #define SPRITES \
