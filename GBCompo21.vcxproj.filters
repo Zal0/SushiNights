@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\Trig.c" />
+    <ClCompile Include="src\ZGBMain.c" />
+    <ClCompile Include="src\SpriteHook.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpritePlayer.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpritePowerupRope.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateGame.c">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateGameWin.c">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateSplash.c">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateSplashZGB.c">
+      <Filter>States</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Trig.h" />
+    <ClInclude Include="include\ZGBMain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="States">
+      <UniqueIdentifier>{cc51d991-577c-4c83-b594-457a44a49f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sprites">
+      <UniqueIdentifier>{b0d3a7d6-8d5b-44e6-bf7b-743cc912c0c9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
