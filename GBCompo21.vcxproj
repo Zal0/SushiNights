@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SpriteClient.c" />
     <ClCompile Include="src\SpriteHook.c" />
     <ClCompile Include="src\SpritePlayer.c" />
     <ClCompile Include="src\SpritePowerupRope.c" />
+    <ClCompile Include="src\SpriteSushi.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateGameWin.c" />
     <ClCompile Include="src\StateSplash.c" />

@@ -52,12 +52,12 @@ void START() {
 }
 
 void DrawRope() {
-	UINT8 start_x = player_ptr->x - scroll_x + 8 + 4;
+	UINT8 i = (player_ptr->coll_w >> 1) - 1;
+	UINT8 start_x = player_ptr->x - scroll_x + 8 + i;
 	UINT8 start_y = player_ptr->y - scroll_y + 16;
-	INT8 step_x = (THIS->x - player_ptr->x - 4) >> 2;
+	INT8 step_x = ((THIS->x - player_ptr->x - i) >> 2);
 	INT8 step_y = (THIS->y - player_ptr->y) >> 2;
 
-	UINT8 i;
 	INT8 x_inc = step_x;
 	INT8 y_inc = step_y;
 

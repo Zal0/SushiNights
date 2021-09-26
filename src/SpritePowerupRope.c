@@ -2,12 +2,12 @@
 #include "SpriteManager.h"
 
 extern Sprite* player_ptr;
-UINT8 CheckPowerUp(UINT16 id) BANKED;
-void TakePowerUp(Sprite* powerup) BANKED;
+UINT8 IsCollected(Sprite* collectable) BANKED;
+void TakeCollectable(Sprite* powerup) BANKED;
 extern UINT8 rope_length;
 
 void START() {
-	if(CheckPowerUp(THIS->unique_id) != 255) {
+	if(IsCollected(THIS) != 255) {
 		SpriteManagerRemove(THIS_IDX);
 	}
 }
@@ -15,7 +15,7 @@ void START() {
 void UPDATE() {
 	if(CheckCollision(THIS, player_ptr)) {
 		rope_length += 10;
-		TakePowerUp(THIS);
+		TakeCollectable(THIS);
 		SpriteManagerRemove(THIS_IDX);
 	}
 }

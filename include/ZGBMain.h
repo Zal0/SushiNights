@@ -12,6 +12,8 @@ STATE_DEF_END
 _SPRITE_DMG(SpritePlayer, player)\
 _SPRITE_DMG(SpriteHook, hook)\
 _SPRITE_DMG(SpritePowerupRope, powerup_rope)\
+_SPRITE_DMG(SpriteClient, client)\
+_SPRITE_DMG(SpriteSushi, sushi)\
 SPRITE_DEF_END
 
 #include "ZGBMain_Init.h"
