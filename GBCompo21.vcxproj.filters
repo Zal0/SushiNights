@@ -24,6 +24,12 @@
     <ClCompile Include="src\StateSplashZGB.c">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteClient.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteSushi.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Trig.h" />
