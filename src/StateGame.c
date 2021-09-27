@@ -21,6 +21,7 @@ struct MapInfoBanked {
 
 const struct MapInfoBanked levels[] = {
 	BANKED_MAP(map),
+	BANKED_MAP(map),
 
 	LEVELS_END
 };
@@ -96,6 +97,10 @@ void TakeCollectable(Sprite* collectable) BANKED {
 
 void CheckLevelComplete() BANKED {
 	if(clients_collected == num_clients) {
-		SetState(StateSplash);
+		current_level ++;
+		if(levels[current_level].map == 0)
+			SetState(StateGameWin);
+		else
+			SetState(StateGame);
 	}
 }

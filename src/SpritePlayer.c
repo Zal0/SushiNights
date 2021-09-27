@@ -77,6 +77,11 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 
 void START() {
 	player_ptr = THIS;
+	speed_x = 0;
+	speed_y = 0;
+	decimal_x.w = 0;
+	decimal_y.w = 0;
+
 	SetPlayerState(STATE_WALKING);
 }
 
@@ -250,5 +255,4 @@ void UPDATE() {
 }
 
 void DESTROY() {
-	SetState(StateGame);
 }

@@ -25,6 +25,7 @@ void UPDATE() {
 			SetSpriteAnim(THIS, anim_happy, 4);
 			sushi_collected = 0;
 			TakeCollectable(THIS);
+			
 			clients_collected ++;
 			CheckLevelComplete();
 		}
