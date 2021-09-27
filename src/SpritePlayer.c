@@ -198,7 +198,7 @@ void UpdateHooked() {
 	if(hook_speed > 256) THIS->mirror = NO_MIRROR;
 	else if(hook_speed < -256) THIS->mirror = V_MIRROR;
 
-	if(KEY_TICKED(J_A)) {
+	if(KEY_TICKED(J_B)) {
 			SetPlayerState(STATE_FLYING);
 			speed_x = (new_x - THIS->x) << 8;
 			speed_y = ((new_y - THIS->y) << 8) << 1; //Multiplying by 2 gives the effect of the character jumping
