@@ -3,8 +3,10 @@
 
 extern Sprite* player_ptr;
 extern UINT8 sushi_collected;
+extern UINT8 clients_collected;
 UINT8 IsCollected(Sprite* collectable) BANKED;
 void TakeCollectable(Sprite* powerup) BANKED;
+void CheckLevelComplete() BANKED;
 
 static UINT8 anim_idle[] = {2, 0, 1};
 static UINT8 anim_happy[] = {2, 2, 3};
@@ -23,6 +25,8 @@ void UPDATE() {
 			SetSpriteAnim(THIS, anim_happy, 4);
 			sushi_collected = 0;
 			TakeCollectable(THIS);
+			clients_collected ++;
+			CheckLevelComplete();
 		}
 	}
 }
