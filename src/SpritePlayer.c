@@ -83,7 +83,7 @@ void START() {
 
 #define MAX_X_SPEED 256
 #define X_SPEED_INCREMENT 40
-#define X_SPEED_INCREMENT_OPPOSITE 10
+#define X_SPEED_INCREMENT_OPPOSITE 20
 #define DRAG (speed_x >> 4)
 
 void HorizontalMove() {
@@ -109,6 +109,10 @@ void HorizontalMove() {
 	}
 	
 	decimal_x.h = 0;
+
+	if(speed_x) {
+		THIS->mirror = speed_x > 0 ? NO_MIRROR : V_MIRROR;
+	}
 }
 
 #define JUMP_SPEED 900
@@ -116,14 +120,10 @@ void HorizontalMove() {
 void UpdateWalk() {
 	HorizontalMove();
 
-	if(speed_x) {
-		THIS->mirror = speed_x > 0 ? NO_MIRROR : V_MIRROR;
-	}
 	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, ANIMATION_SPEED);
 	
 	if(KEY_TICKED(J_A)){
 		SetPlayerState(STATE_FLYING);
-		//speed_x = desp_x << 8;
 		speed_y = -JUMP_SPEED;
 		check_key_released_on_jump = 1;
 		bounce_on_coll = 0;
@@ -133,7 +133,6 @@ void UpdateWalk() {
 	if(TranslateSprite(THIS, 0, 1) == 0) {
 		SetPlayerState(STATE_FLYING);
 		bounce_on_coll = 0;
-		//speed_x = desp_x << 8;
 	}
 }
 
@@ -163,10 +162,10 @@ void UpdateHooked() {
 	}
 
 	//swing
-	if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
-		hook_speed -= HOOK_SWING_SPEED;
-	if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
-		hook_speed += HOOK_SWING_SPEED;
+		if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
+			hook_speed -= HOOK_SWING_SPEED;
+		if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
+			hook_speed += HOOK_SWING_SPEED;
 
 	//drag
 	hook_speed -= HOOK_DRAG;
