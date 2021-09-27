@@ -24,7 +24,7 @@ void START() {
 }
 
 void UPDATE() {
-	if(THIS->anim_data == anim_idle && sushi_collected) {
+	if( sushi_collected && (THIS->anim_data == anim_idle || THIS->anim_data == anim_idle_alt)) {
 		if(CheckCollision(THIS, player_ptr)) {
 			SetSpriteAnim(THIS, ANIM(anim_happy), 4);
 			sushi_collected = 0;
