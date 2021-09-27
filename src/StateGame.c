@@ -11,17 +11,18 @@
 IMPORT_MAP(map);
 IMPORT_TILES(font);
 
-#define BANKED_MAP(MAP) {BANK(MAP), &MAP}
+#define BANKED_MAP(MAP, SECONDS) {BANK(MAP), &MAP, SECONDS}
 #define LEVELS_END {0, 0}
 
 struct MapInfoBanked {
 	UINT8 bank;
 	struct MapInfo* map;
+	UINT16 seconds;
 };
 
 const struct MapInfoBanked levels[] = {
-	BANKED_MAP(map),
-	BANKED_MAP(map),
+	BANKED_MAP(map, 30),
+	BANKED_MAP(map, 30),
 
 	LEVELS_END
 };
@@ -34,6 +35,8 @@ UINT8 rope_length;
 UINT8 sushi_collected;
 UINT8 num_clients;
 UINT8 clients_collected;
+UINT16 countdown;
+UINT8 ticks;
 
 #define MAX_COLLECTABLES 10
 UINT16 collectables_taken[MAX_COLLECTABLES + 1];
@@ -69,6 +72,8 @@ void START() {
 	scroll_top_movement_limit = 72;
 	num_clients = 0;
 	clients_collected = 0;
+	countdown = level->seconds + 1;
+	ticks = 59; //next frame will update the value
 
 	LocateStuff(level->bank, level->map, &start_x, &start_y);
 	scroll_target = SpriteManagerAdd(SpritePlayer, start_x << 3, (start_y - 1) << 3);
@@ -76,10 +81,26 @@ void START() {
 
 	InitRope();
 
+	INIT_FONT(font, PRINT_WIN);
+	WX_REG = 7;
+	WY_REG = 128;
+	scroll_h_border = 2 << 3;
+	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
 }
 
 void UPDATE() {
+	ticks ++;
+	if(ticks == 60) {
+		ticks = 0;
+		countdown --;
+		PRINT_POS(2, 0);
+		Printf("%d  ", countdown);
+		if(countdown == 0) {
+			//Time up!
+			SetState(StateGame);
+		}
+	}
 }
 
 UINT8 IsCollected(Sprite* collectable) BANKED {
