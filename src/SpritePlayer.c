@@ -156,14 +156,14 @@ void UpdateHooked() {
 	
 	if(KEY_PRESSED(J_UP)){
 		if(hook_radius.w > 16) {
-			rad_incr = -1;
-			hook_radius.w -= 1;
+			rad_incr = -3;
+			hook_radius.w -= 3;
 		}
 	} else if(KEY_PRESSED(J_DOWN)){
-		hook_radius.w += 1;
+		hook_radius.w += 3;
 		if(hook_radius.w > (rope_length << 1))
 			hook_radius.w = (rope_length << 1);
-		rad_incr = 1;
+		rad_incr = 3;
 	}
 
 	//swing
