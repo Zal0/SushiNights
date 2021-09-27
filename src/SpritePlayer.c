@@ -167,11 +167,18 @@ void UpdateHooked() {
 	}
 
 	//swing
+	if((ang > 250 || ang < 6) && hook_speed > -HOOK_SWING_SPEED && hook_speed < HOOK_SPEED) {
+		if(KEY_PRESSED(J_LEFT))
+			hook_speed = -600;
+		if(KEY_PRESSED(J_RIGHT))
+			hook_speed = 600;
+	} else {
 		if(ang < 127 && hook_speed < 0 && KEY_PRESSED(J_LEFT))
 			hook_speed -= HOOK_SWING_SPEED;
 		if(ang > 128 && hook_speed > 0 && KEY_PRESSED(J_RIGHT))
 			hook_speed += HOOK_SWING_SPEED;
-
+	}
+	
 	//drag
 	hook_speed -= HOOK_DRAG;
 
@@ -180,7 +187,7 @@ void UpdateHooked() {
 	if(hook_speed < -MAX_HOOK_SPEED) hook_speed = -MAX_HOOK_SPEED;
 
 	cached_ang = hook_ang;
-	hook_ang.w += hook_speed ;
+	hook_ang.w += hook_speed;
 
 	tmp_x.w = SIN(hook_ang.h) * hook_radius.w; //using SIN instead of cos because I am rotating the axis so 0 points down, 64 points right and -64 points left
 	tmp_y.w = COS(hook_ang.h) * hook_radius.w;
