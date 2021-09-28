@@ -5,15 +5,12 @@
 #include "ZGBMain.h"
 #include "SpriteManager.h"
 
-IMPORT_MAP(splash);
 IMPORT_MAP(mainmenu);
 
 
 extern UINT8 current_level;
 
 void START() {
-	
-
 	InitScroll(BANK(mainmenu), &mainmenu, 0, 0);
 	SpriteManagerAdd(SpritePlayerMenu, 122,56);
 }
