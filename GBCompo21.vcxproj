@@ -22,6 +22,7 @@
     <ClCompile Include="src\SpriteClient.c" />
     <ClCompile Include="src\SpriteHook.c" />
     <ClCompile Include="src\SpritePlayer.c" />
+    <ClCompile Include="src\SpritePlayerMenu.c" />
     <ClCompile Include="src\SpritePowerupRope.c" />
     <ClCompile Include="src\SpriteSushi.c" />
     <ClCompile Include="src\StateGame.c" />
