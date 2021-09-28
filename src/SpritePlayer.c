@@ -13,6 +13,8 @@ extern UINT8 rope_length;
 void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED;
 
 //Walk
+UINT16 safe_jump_x;
+UINT16 safe_jump_y;
 
 //Hooked
 fixed hook_radius;
@@ -31,14 +33,16 @@ UINT8 bounce_on_coll; //Bouncing after making a jump doesn't look good
 typedef enum {
 	STATE_WALKING,
 	STATE_HOOKED,
-	STATE_FLYING
+	STATE_FLYING,
+	STATE_FALL_RESPAWN,
 } PLAYER_STATE;
 PLAYER_STATE player_state = STATE_WALKING;
 
 const UINT8 anim_idle[] = {3, 0,1,2};
 const UINT8 anim_walk[] = {4, 3, 4,5,6};
 const UINT8 anim_jump[] = {1, 7};
-const UINT8 anim_hooked[] = { 3, 7,8,9 };
+const UINT8 anim_hooked[] = { 3, 7,8,10 };
+const UINT8 anim_respawn[] = {1, 9};
 const UINT8 ANIMATION_SPEED = 16; 
 
 void SetPlayerState(PLAYER_STATE state) {
@@ -54,13 +58,19 @@ void SetPlayerState(PLAYER_STATE state) {
 			break;
 
 		case STATE_FLYING:
-			//speed_x = 0;
 			speed_y = 0;
-			//decimal_x.w = 0;
 			decimal_y.w = 0;
 			check_key_released_on_jump = 0;
 			bounce_on_coll = 1;
 			SetSpriteAnim(player_ptr, anim_jump, ANIMATION_SPEED);
+			break;
+
+		case STATE_FALL_RESPAWN:
+			speed_x = 0;
+			speed_y = 0;
+			decimal_x.w = 0;
+			decimal_y.w = 0;
+			SetSpriteAnim(player_ptr, anim_respawn, ANIMATION_SPEED);
 			break;
 	}
 }
@@ -81,6 +91,9 @@ void START() {
 	speed_y = 0;
 	decimal_x.w = 0;
 	decimal_y.w = 0;
+
+	safe_jump_x = THIS->x;
+	safe_jump_y = THIS->y;
 
 	SetPlayerState(STATE_WALKING);
 }
@@ -123,6 +136,9 @@ void HorizontalMove() {
 #define JUMP_SPEED 900
 
 void UpdateWalk() {
+	safe_jump_x = THIS->x;
+	safe_jump_y = THIS->y;
+
 	HorizontalMove();
 
 	SetSpriteAnim(THIS, speed_x ? anim_walk : anim_idle, ANIMATION_SPEED);
@@ -241,6 +257,25 @@ void UpdateFlying() {
 	}
 	decimal_x.h = 0;
 	decimal_y.h = 0;
+
+	if(THIS->y > scroll_h) {
+		SetPlayerState(STATE_FALL_RESPAWN);
+	}
+}
+
+void UpdateFallRespawn() {
+	if(THIS->x > safe_jump_x)
+		THIS->x --;
+	else if(THIS->x < safe_jump_x)
+		THIS->x ++;
+
+	if(THIS->y > safe_jump_y)
+		THIS->y --;
+	else if(THIS->y < safe_jump_y)
+		THIS->y ++;
+
+	if(THIS->x == safe_jump_x && THIS->y == safe_jump_y)
+		SetPlayerState(STATE_WALKING);
 }
 
 void UPDATE() {
@@ -253,6 +288,9 @@ void UPDATE() {
 			break;
 		case STATE_FLYING:
 			UpdateFlying();
+			break;
+		case STATE_FALL_RESPAWN:
+			UpdateFallRespawn();
 			break;
 	}
 
