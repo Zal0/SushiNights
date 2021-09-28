@@ -7,6 +7,7 @@
 #include <string.h>
 #include "BankManager.h"
 #include "MapInfo.h"
+#include "Music.h"
 
 IMPORT_MAP(map);
 IMPORT_MAP(level01);
@@ -14,6 +15,8 @@ IMPORT_MAP(level02);
 IMPORT_MAP(level03);
 IMPORT_MAP(level06);
 IMPORT_TILES(font);
+
+DECLARE_MUSIC(level1);
 
 #define BANKED_MAP(MAP, SECONDS) {BANK(MAP), &MAP, SECONDS}
 #define LEVELS_END {0, 0}
@@ -95,6 +98,8 @@ void START() {
 	scroll_h_border = 2 << 3;
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
+
+	PlayMusic(level1, 1);
 }
 
 void UPDATE() {
