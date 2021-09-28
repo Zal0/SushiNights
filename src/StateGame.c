@@ -27,6 +27,8 @@ const struct MapInfoBanked levels[] = {
 	LEVELS_END
 };
 
+#define INITIAL_ROPE_LENGTH 64
+
 UINT8 current_level = 0;
 
 UINT8 coll_tiles[] = {1, 2,4,5,6,7,13,15,50,51,52,53, 0};
@@ -66,7 +68,7 @@ void START() {
 	UINT8 start_x, start_y;
 	const struct MapInfoBanked* level = &levels[current_level];
 
-	rope_length = 64;
+	rope_length = INITIAL_ROPE_LENGTH;
 	sushi_collected = 0;
 	memset(collectables_taken, 0, sizeof(collectables_taken));
 	scroll_top_movement_limit = 72;
