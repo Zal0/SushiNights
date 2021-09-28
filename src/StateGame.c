@@ -98,7 +98,8 @@ void UPDATE() {
 		Printf("%d  ", countdown);
 		if(countdown == 0) {
 			//Time up!
-			SetState(StateGame);
+			SetState(StateTimeUp);
+			HIDE_WIN;
 		}
 	}
 }
@@ -123,5 +124,6 @@ void CheckLevelComplete() BANKED {
 			SetState(StateGameWin);
 		else
 			SetState(StateGame);
+		HIDE_WIN;
 	}
 }

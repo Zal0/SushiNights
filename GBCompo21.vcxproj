@@ -28,6 +28,7 @@
     <ClCompile Include="src\StateGameWin.c" />
     <ClCompile Include="src\StateSplash.c" />
     <ClCompile Include="src\StateSplashZGB.c" />
+    <ClCompile Include="src\StateTimeUp.c" />
     <ClCompile Include="src\Trig.c" />
     <ClCompile Include="src\ZGBMain.c" />
   </ItemGroup>

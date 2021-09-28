@@ -6,6 +6,7 @@ _STATE(StateSplashZGB)\
 _STATE(StateSplash)\
 _STATE(StateGame)\
 _STATE(StateGameWin)\
+_STATE(StateTimeUp)\
 STATE_DEF_END
 
 #define SPRITES \
