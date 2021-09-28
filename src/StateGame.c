@@ -9,6 +9,8 @@
 #include "MapInfo.h"
 
 IMPORT_MAP(map);
+IMPORT_MAP(level01);
+IMPORT_MAP(level02);
 IMPORT_TILES(font);
 
 #define BANKED_MAP(MAP, SECONDS) {BANK(MAP), &MAP, SECONDS}
