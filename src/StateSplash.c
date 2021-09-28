@@ -22,7 +22,7 @@ void START() {
 void UPDATE() {
 	if(KEY_TICKED(J_START)) {
 		current_level = 0;
-
 		SetState(StateGame);
+		//SetState(StateGameWin);
 	}
 }
