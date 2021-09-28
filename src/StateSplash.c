@@ -16,7 +16,7 @@ void START() {
 	SpriteManagerAdd(SpritePlayerMenu, 122,56);
 
 	INIT_FONT(font, PRINT_BKG);
-	PRINT(1, 15, "PRESS START");
+	PRINT(0, 13, " PRESS START ");	
 }
 
 void UPDATE() {
