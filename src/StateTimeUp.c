@@ -3,10 +3,10 @@
 #include "ZGBMain.h"
 #include "Keys.h"
 
-IMPORT_MAP(timeup);
+IMPORT_MAP(gameover);
 
 void START() {
-	InitScroll(BANK(timeup), &timeup, 0, 0);
+	InitScroll(BANK(gameover), &gameover, 0, 0);
 }
 
 void UPDATE() {
