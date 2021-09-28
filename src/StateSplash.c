@@ -4,15 +4,19 @@
 #include "Keys.h"
 #include "ZGBMain.h"
 #include "SpriteManager.h"
+#include "Print.h"
 
 IMPORT_MAP(mainmenu);
-
+IMPORT_TILES(font);
 
 extern UINT8 current_level;
 
 void START() {
 	InitScroll(BANK(mainmenu), &mainmenu, 0, 0);
 	SpriteManagerAdd(SpritePlayerMenu, 122,56);
+
+	INIT_FONT(font, PRINT_BKG);
+	PRINT(1, 15, "PRESS START");
 }
 
 void UPDATE() {
