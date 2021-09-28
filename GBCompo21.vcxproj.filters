@@ -33,6 +33,9 @@
     <ClCompile Include="src\StateTimeUp.c">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpritePlayerMenu.c">
+      <Filter>Sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Trig.h" />
