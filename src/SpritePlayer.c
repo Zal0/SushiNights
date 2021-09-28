@@ -86,6 +86,9 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 }
 
 void START() {
+	THIS->lim_x = 1000;
+	THIS->lim_y = 1000;
+
 	player_ptr = THIS;
 	speed_x = 0;
 	speed_y = 0;
@@ -258,7 +261,7 @@ void UpdateFlying() {
 	decimal_x.h = 0;
 	decimal_y.h = 0;
 
-	if(THIS->y > scroll_h) {
+	if((INT16)THIS->y > (INT16)scroll_h) {
 		SetPlayerState(STATE_FALL_RESPAWN);
 	}
 }
@@ -294,7 +297,7 @@ void UPDATE() {
 			break;
 	}
 
-	if(!hook_ptr && KEY_TICKED(J_B)) {
+	if(player_state != STATE_FALL_RESPAWN && !hook_ptr && KEY_TICKED(J_B)) {
 		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
 	}
 }
