@@ -44,7 +44,8 @@ const UINT8 anim_jump[] = {1, 7};
 const UINT8 anim_hooked[] = { 3, 7,8,10 };
 const UINT8 anim_transform[] = { 5, 11,12,13,12,13}; //Change to victory loop once THIS->anim_frame ==4
 const UINT8 anim_victory[] = { 2, 14,15 };
-const UINT8 anim_respawn[] = {1, 9};
+const UINT8 anim_respawn[] = {1, 16};
+const UINT8 anim_happy[] = { 2, 17,18 };
 const UINT8 ANIMATION_SPEED = 16; 
 
 void SetPlayerState(PLAYER_STATE state) {
