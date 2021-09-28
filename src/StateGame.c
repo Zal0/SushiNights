@@ -77,7 +77,7 @@ void START() {
 
 	LocateStuff(level->bank, level->map, &start_x, &start_y);
 	scroll_target = SpriteManagerAdd(SpritePlayer, start_x << 3, (start_y - 1) << 3);
-	InitScroll(BANK(map), &map, coll_tiles, 0);
+	InitScroll(level->bank, level->map, coll_tiles, 0);
 
 	InitRope();
 
