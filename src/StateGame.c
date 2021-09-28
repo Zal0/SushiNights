@@ -11,6 +11,7 @@
 IMPORT_MAP(map);
 IMPORT_MAP(level01);
 IMPORT_MAP(level02);
+IMPORT_MAP(level03);
 IMPORT_MAP(level06);
 IMPORT_TILES(font);
 
@@ -26,6 +27,7 @@ struct MapInfoBanked {
 const struct MapInfoBanked levels[] = {
 	BANKED_MAP(level01, 30),
 	BANKED_MAP(level02, 30),
+	BANKED_MAP(level03, 60),
 	BANKED_MAP(level06, 30),
 
 	LEVELS_END
