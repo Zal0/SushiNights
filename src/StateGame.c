@@ -15,8 +15,9 @@ IMPORT_MAP(level02);
 IMPORT_MAP(level03);
 IMPORT_MAP(level04);
 IMPORT_MAP(level06);
-IMPORT_TILES(font);
 
+IMPORT_TILES(font);
+IMPORT_MAP(window);
 DECLARE_MUSIC(level1);
 
 #define BANKED_MAP(MAP, SECONDS) {BANK(MAP), &MAP, SECONDS}
@@ -29,6 +30,7 @@ struct MapInfoBanked {
 };
 
 const struct MapInfoBanked levels[] = {
+	BANKED_MAP(map, 330),
 	BANKED_MAP(level01, 30),
 	BANKED_MAP(level02, 40),
 	BANKED_MAP(level03, 60),
@@ -75,6 +77,19 @@ void LocateStuff(UINT8 map_bank, struct MapInfo* map, UINT8* start_x, UINT8* sta
 	POP_BANK;
 }
 
+const UINT8 CHECKED_TILE = 75;
+const UINT8 UNCHECKED_TILE = 74;
+void RefreshSushies() BANKED {
+	UINT8 i;
+
+	for(i = 0; i != clients_collected; ++i) {
+		set_win_tiles(19 - i, 0, 1, 1, &CHECKED_TILE);
+	}
+	for(; i != num_clients; ++i) {
+		set_win_tiles(19 - i, 0, 1, 1, &UNCHECKED_TILE);
+	}
+}
+
 void START() {
 	UINT8 start_x, start_y;
 	const struct MapInfoBanked* level = &levels[current_level];
@@ -96,8 +111,10 @@ void START() {
 
 	INIT_FONT(font, PRINT_WIN);
 	WX_REG = 7;
-	WY_REG = 128;
-	scroll_h_border = 2 << 3;
+	WY_REG = 136;
+	scroll_h_border = 1 << 3;
+	InitWindow(0, 0, BANK(window), &window);
+	RefreshSushies();
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
 
