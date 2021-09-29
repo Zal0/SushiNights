@@ -17,6 +17,8 @@ void START() {
 
 	INIT_FONT(font, PRINT_BKG);
 	PRINT(0, 13, " PRESS START ");	
+	PRINT(1, 16, "MONIS GAMES");
+	PRINT(2, 17, "GBCOMPO21");
 }
 
 void UPDATE() {
