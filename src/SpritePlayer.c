@@ -171,7 +171,7 @@ void HorizontalMove() {
 	}
 }
 
-#define JUMP_SPEED 900
+#define JUMP_SPEED 870
 
 void UpdateWalk() {
 	safe_jump_x = THIS->x;
