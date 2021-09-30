@@ -272,7 +272,7 @@ void UpdateHooked() {
 }
 
 #define MAX_Y_SPEED 900
-#define GRAVITY 30
+#define GRAVITY 28
 
 void UpdateFlying() {
 	if(speed_y < MAX_Y_SPEED) {
