@@ -1,4 +1,4 @@
-PROJECT_NAME = GBCOMPO21
+PROJECT_NAME = SushiNights
 
 all: build_gb
 
