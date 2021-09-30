@@ -153,7 +153,9 @@ void UPDATE() {
 			countdown --;
 			PRINT_POS(2, 0);
 			Printf("%d", countdown);
-			if(countdown == 0) {
+			if(countdown == 99 || countdown == 9) {
+				Printf(" ");
+			} else if(countdown == 0) {
 				//Time up!
 				SetState(StateTimeUp);
 				HIDE_WIN;
