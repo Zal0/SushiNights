@@ -19,6 +19,7 @@ IMPORT_MAP(level05);
 IMPORT_MAP(maikel1);
 IMPORT_MAP(maikel2);
 
+IMPORT_TILES(blackfont);
 IMPORT_TILES(font);
 IMPORT_MAP(window);
 DECLARE_MUSIC(level1);
@@ -85,8 +86,19 @@ void LocateStuff(UINT8 map_bank, struct MapInfo* map, UINT8* start_x, UINT8* sta
 
 const UINT8 CHECKED_TILE = 75;
 const UINT8 UNCHECKED_TILE = 74;
+const UINT8 SUSHI_TILE= 86;
+const UINT8 NOSUSHI_TILE = 87;
 void RefreshSushies() BANKED {
 	UINT8 i;
+
+	if (sushi_collected)
+	{
+		set_win_tiles(6, 0, 1, 1, &SUSHI_TILE);
+	}
+	else
+	{
+		set_win_tiles(6, 0, 1, 1, &NOSUSHI_TILE);
+	}
 
 	for(i = 0; i != clients_collected; ++i) {
 		set_win_tiles(19 - i, 0, 1, 1, &CHECKED_TILE);
@@ -140,7 +152,7 @@ void UPDATE() {
 			ticks = 0;
 			countdown --;
 			PRINT_POS(2, 0);
-			Printf("%d  ", countdown);
+			Printf("%d", countdown);
 			if(countdown == 0) {
 				//Time up!
 				SetState(StateTimeUp);
@@ -170,6 +182,7 @@ UINT8 IsCollected(Sprite* collectable) BANKED {
 
 void TakeCollectable(Sprite* collectable) BANKED {
 	collectables_taken[++ collectables_taken[0]] = collectable->unique_id;
+	RefreshSushies();
 }
 
 void DoAnimLevelEnd();
@@ -207,7 +220,7 @@ void DoAnimLevelEnd() {
 		delay(20);
 	}
 	ShowVictoryAnim();
-
+	INIT_FONT(blackfont, PRINT_WIN);
 	print_target = PRINT_BKG;
 	PRINT_POS(x + 2 , (top_bar_start - 3) & 0x1F);
 

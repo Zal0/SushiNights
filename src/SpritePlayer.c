@@ -341,7 +341,7 @@ void UpdateDeliveringSushi() {
 
 void UpdateVictory() {
 	if(THIS->anim_frame == 4) {
-		SetSpriteAnim(THIS, anim_victory, ANIMATION_SPEED);
+		SetSpriteAnim(THIS, anim_victory, 6u);
 	}
 }
 
