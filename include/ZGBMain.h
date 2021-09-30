@@ -16,6 +16,7 @@ _SPRITE_DMG(SpritePowerupRope, powerup_rope)\
 _SPRITE_DMG(SpriteClient, client)\
 _SPRITE_DMG(SpriteSushi, sushi)\
 _SPRITE_DMG(SpritePlayerMenu, playermenu)\
+_SPRITE_DMG(SpriteBubble, bubble)\
 SPRITE_DEF_END
 
 #include "ZGBMain_Init.h"

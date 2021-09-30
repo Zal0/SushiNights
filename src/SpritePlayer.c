@@ -91,6 +91,9 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 	hook_ang.h = ang > 0 ? 128 - (ang - 64) : (-64 - ang);
 	hook_speed = 0;
 
+	SpriteManagerAdd(SpriteBubble, x-6, y-5);
+
+
 	SetPlayerState(STATE_HOOKED);
 }
 
