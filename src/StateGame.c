@@ -8,6 +8,7 @@
 #include "BankManager.h"
 #include "MapInfo.h"
 #include "Music.h"
+#include "Keys.h"
 
 IMPORT_MAP(map);
 IMPORT_MAP(level01);
@@ -44,14 +45,11 @@ const struct MapInfoBanked levels[] = {
 	LEVELS_END
 };
 
-
-
 #define INITIAL_ROPE_LENGTH 64
 
-UINT8 current_level = 0;
+UINT8 current_level = 7;
 
 UINT8 coll_tiles[] = {1, 2,4,5,6,7,13,15,50,51,52,53, 0};
-UINT8 highscore[] = {0,0,0,0,0,0,0,0};
 
 UINT8 rope_length;
 UINT8 sushi_collected;
@@ -59,6 +57,7 @@ UINT8 num_clients;
 UINT8 clients_collected;
 UINT16 countdown;
 UINT8 ticks;
+UINT8 level_complete;
 
 #define MAX_COLLECTABLES 10
 UINT16 collectables_taken[MAX_COLLECTABLES + 1];
@@ -107,8 +106,9 @@ void START() {
 	scroll_top_movement_limit = 72;
 	num_clients = 0;
 	clients_collected = 0;
-	countdown = level->seconds + 1;	
+	countdown = level->seconds + 1;
 	ticks = 59; //next frame will update the value
+	level_complete = 0;
 
 	LocateStuff(level->bank, level->map, &start_x, &start_y);
 	scroll_target = SpriteManagerAdd(SpritePlayer, start_x << 3, (start_y - 1) << 3);
@@ -122,10 +122,7 @@ void START() {
 	scroll_h_border = 1 << 3;
 	InitWindow(0, 0, BANK(window), &window);
 	RefreshSushies();
-
-	
-
-	PRINT(19 - num_clients - 10, 0, "DELIVERIES");
+	PRINT(19 - num_clients - 6, 0, "CLIENTS");
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
 
@@ -136,15 +133,26 @@ void START() {
 }
 
 void UPDATE() {
-	ticks ++;
-	if(ticks == 60) {
-		ticks = 0;
-		countdown --;
-		PRINT_POS(2, 0);
-		Printf("%d  ", countdown);		
-		if(countdown == 0) {
-			//Time up!
-			SetState(StateTimeUp);
+	if(!level_complete) {
+		ticks ++;
+		if(ticks == 60) {
+			ticks = 0;
+			countdown --;
+			PRINT_POS(2, 0);
+			Printf("%d  ", countdown);
+			if(countdown == 0) {
+				//Time up!
+				SetState(StateTimeUp);
+				HIDE_WIN;
+			}
+		}
+	} else {
+		if(KEY_TICKED(J_START)) {
+			current_level ++;
+			if(levels[current_level].map == 0)
+				SetState(StateGameWin);
+			else
+				SetState(StateGame);
 			HIDE_WIN;
 		}
 	}
@@ -163,15 +171,42 @@ void TakeCollectable(Sprite* collectable) BANKED {
 	collectables_taken[++ collectables_taken[0]] = collectable->unique_id;
 }
 
-void CheckLevelComplete() BANKED {	
-	if(clients_collected == num_clients) 
-	{
-		highscore[current_level] = levels[current_level].seconds - countdown;
-		current_level ++;
-		if(levels[current_level].map == 0)
-			SetState(StateGameWin);
-		else
-			SetState(StateGame);
-		HIDE_WIN;
+void DoAnimLevelEnd();
+void CheckLevelComplete() BANKED {
+	if(clients_collected == num_clients) {
+		DoAnimLevelEnd();
 	}
+}
+
+extern Sprite* player_ptr;
+void ShowVictoryAnim() BANKED;
+void DoAnimLevelEnd() {
+	UINT8 top_bar_start    = (((player_ptr->y                     ) >> 3) - 1) & 0x1F;
+	UINT8 bottom_bar_start = (((player_ptr->y + player_ptr->coll_h) >> 3) + 1) & 0x1F;
+
+	UINT8 n_bars = 15;
+
+	UINT8 x = scroll_x >> 3;
+	UINT8 black_tile = 0;
+
+	UINT8 i;
+	Sprite* spr;
+	HIDE_WIN;
+	SPRITEMANAGER_ITERATE(i, spr) {
+		if(spr != player_ptr)
+			SpriteManagerRemove(i);
+	}
+	
+	for(i = n_bars + 1; i != 0; --i) {
+		for(int j = 0; j < 21; ++j) {
+			set_bkg_tiles((x + j) & 0x1F, (top_bar_start - i) & 0x1F, 1, 1, &black_tile);
+			set_bkg_tiles((x + j) & 0x1F, (bottom_bar_start + i) & 0x1F, 1, 1, &black_tile);
+		}
+		delay(20);
+	}
+	ShowVictoryAnim();
+
+	print_target = PRINT_BKG;
+	PRINT(x + 5, (top_bar_start - 1) & 0x1F, "GOOD JOB!");
+	level_complete = 1;
 }
