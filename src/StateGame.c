@@ -33,6 +33,7 @@ struct MapInfoBanked {
 };
 
 const struct MapInfoBanked levels[] = {
+	BANKED_MAP(map, 330),
 	BANKED_MAP(level01, 30),
 	BANKED_MAP(level02, 40),
 	BANKED_MAP(level03, 40),
@@ -40,7 +41,6 @@ const struct MapInfoBanked levels[] = {
 	BANKED_MAP(level05, 120),
 	BANKED_MAP(maikel1, 180),
 	BANKED_MAP(maikel2, 180),
-	BANKED_MAP(map, 330),
 
 	LEVELS_END
 };
@@ -50,6 +50,7 @@ const struct MapInfoBanked levels[] = {
 UINT8 current_level = 7;
 
 UINT8 coll_tiles[] = {1, 2,4,5,6,7,13,15,50,51,52,53, 0};
+UINT8 highscore[] = { 0,0,0,0,0,0,0,0 };
 
 UINT8 rope_length;
 UINT8 sushi_collected;
@@ -99,6 +100,7 @@ void RefreshSushies() BANKED {
 void START() {
 	UINT8 start_x, start_y;
 	const struct MapInfoBanked* level = &levels[current_level];
+	highscore[current_level] = 0;
 
 	rope_length = INITIAL_ROPE_LENGTH;
 	sushi_collected = 0;
@@ -174,6 +176,7 @@ void TakeCollectable(Sprite* collectable) BANKED {
 void DoAnimLevelEnd();
 void CheckLevelComplete() BANKED {
 	if(clients_collected == num_clients) {
+		highscore[current_level] = countdown;
 		DoAnimLevelEnd();
 	}
 }
@@ -207,6 +210,10 @@ void DoAnimLevelEnd() {
 	ShowVictoryAnim();
 
 	print_target = PRINT_BKG;
-	PRINT(x + 5, (top_bar_start - 1) & 0x1F, "GOOD JOB!");
+	PRINT_POS(x + 2 , (top_bar_start - 3) & 0x1F);
+
+	Printf(" LVL SCORE %d00  ", highscore[current_level]);
+
+	PRINT(x + 5, (top_bar_start - 1) & 0x1F, "GOOD JOB!");	
 	level_complete = 1;
 }
