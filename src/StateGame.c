@@ -19,6 +19,7 @@ IMPORT_MAP(level05);
 IMPORT_MAP(maikel1);
 IMPORT_MAP(maikel2);
 
+IMPORT_TILES(blackfont);
 IMPORT_TILES(font);
 IMPORT_MAP(window);
 DECLARE_MUSIC(level1);
@@ -208,7 +209,7 @@ void DoAnimLevelEnd() {
 		delay(20);
 	}
 	ShowVictoryAnim();
-
+	INIT_FONT(blackfont, PRINT_WIN);
 	print_target = PRINT_BKG;
 	PRINT_POS(x + 2 , (top_bar_start - 3) & 0x1F);
 
