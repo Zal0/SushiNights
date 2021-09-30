@@ -10,7 +10,11 @@ IMPORT_TILES(blackfont);
 IMPORT_MAP(victory);
 extern UINT8 anim_idle_menu[];
 
+extern UINT8 highscore[];
+extern UINT8 current_level;
+
 void PlayerMenuSetAnim(Sprite* sprite, UINT8 idx) BANKED;
+UINT8 totalScore = 0;
 
 void START() {
 	InitScroll(BANK(victory), &victory, 0, 0);		
@@ -32,6 +36,14 @@ void START() {
 	
 	INIT_FONT(blackfont, PRINT_BKG);
 	PRINT(6, 13, " YOU WIN");
+	UINT8 i;
+	for ( i = 0; i < current_level; i++)
+	{
+		totalScore += highscore[i];
+	}
+	totalScore = totalScore * 100;
+	PRINT_POS(2, 4);
+	Printf("SCORE:  %d  ", totalScore);	
 }
 
 void UPDATE() {

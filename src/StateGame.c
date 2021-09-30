@@ -44,11 +44,14 @@ const struct MapInfoBanked levels[] = {
 	LEVELS_END
 };
 
+
+
 #define INITIAL_ROPE_LENGTH 64
 
 UINT8 current_level = 0;
 
 UINT8 coll_tiles[] = {1, 2,4,5,6,7,13,15,50,51,52,53, 0};
+UINT8 highscore[] = {0,0,0,0,0,0,0,0};
 
 UINT8 rope_length;
 UINT8 sushi_collected;
@@ -104,7 +107,7 @@ void START() {
 	scroll_top_movement_limit = 72;
 	num_clients = 0;
 	clients_collected = 0;
-	countdown = level->seconds + 1;
+	countdown = level->seconds + 1;	
 	ticks = 59; //next frame will update the value
 
 	LocateStuff(level->bank, level->map, &start_x, &start_y);
@@ -119,6 +122,9 @@ void START() {
 	scroll_h_border = 1 << 3;
 	InitWindow(0, 0, BANK(window), &window);
 	RefreshSushies();
+
+	
+
 	PRINT(19 - num_clients - 6, 0, "CLIENTS");
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
@@ -135,7 +141,7 @@ void UPDATE() {
 		ticks = 0;
 		countdown --;
 		PRINT_POS(2, 0);
-		Printf("%d  ", countdown);
+		Printf("%d  ", countdown);		
 		if(countdown == 0) {
 			//Time up!
 			SetState(StateTimeUp);
@@ -157,8 +163,10 @@ void TakeCollectable(Sprite* collectable) BANKED {
 	collectables_taken[++ collectables_taken[0]] = collectable->unique_id;
 }
 
-void CheckLevelComplete() BANKED {
-	if(clients_collected == num_clients) {
+void CheckLevelComplete() BANKED {	
+	if(clients_collected == num_clients) 
+	{
+		highscore[current_level] = levels[current_level].seconds - countdown;
 		current_level ++;
 		if(levels[current_level].map == 0)
 			SetState(StateGameWin);
