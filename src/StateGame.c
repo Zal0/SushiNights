@@ -16,6 +16,7 @@ IMPORT_MAP(level02);
 IMPORT_MAP(level03);
 IMPORT_MAP(level04);
 IMPORT_MAP(level05);
+IMPORT_MAP(level06);
 IMPORT_MAP(maikel1);
 IMPORT_MAP(maikel2);
 
@@ -37,10 +38,11 @@ const struct MapInfoBanked levels[] = {
 	BANKED_MAP(level01, 30),
 	BANKED_MAP(level02, 45),
 	BANKED_MAP(level03, 60),
-	BANKED_MAP(level04, 80),
-	BANKED_MAP(level05, 100),
-	BANKED_MAP(maikel1, 160),
-	BANKED_MAP(maikel2, 120),
+	BANKED_MAP(level04, 60),
+	BANKED_MAP(level05, 90),
+	BANKED_MAP(level06, 90),
+	BANKED_MAP(maikel1, 120),
+	BANKED_MAP(maikel2, 100),
 
 	LEVELS_END
 };
