@@ -5,9 +5,12 @@
 #include "ZGBMain.h"
 #include "SpriteManager.h"
 #include "Print.h"
+#include "Music.h"
+
 
 IMPORT_MAP(mainmenu);
 IMPORT_TILES(blackfont);
+DECLARE_MUSIC(start);
 
 extern UINT8 current_level;
 
@@ -22,6 +25,8 @@ void START() {
 	PRINT(0, 13, " PRESS START ");	
 	PRINT(1, 16, "MONIS GAMES");
 	PRINT(2, 17, "GBCOMPO21");
+	PlayMusic(start, 1);
+
 }
 
 void UPDATE() {

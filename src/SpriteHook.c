@@ -79,7 +79,7 @@ void UPDATE() {
 	CUSTOM_DATA* data = (CUSTOM_DATA*)THIS->custom_data;
 	
 	if(!data->hooked) {
-		data->dist += 4;
+		data->dist += 5;
 		radius.w = ((SIN(data->dist) * data->max_length) >> 6);
 
 		if((INT16)radius.w >= 0) {

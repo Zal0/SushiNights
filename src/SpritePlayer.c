@@ -180,7 +180,7 @@ void HorizontalMove() {
 	}
 }
 
-#define JUMP_SPEED 900
+#define JUMP_SPEED 870
 
 void UpdateWalk() {
 	safe_jump_x = THIS->x;
@@ -281,7 +281,7 @@ void UpdateHooked() {
 }
 
 #define MAX_Y_SPEED 900
-#define GRAVITY 30
+#define GRAVITY 28
 
 void UpdateFlying() {
 	if(speed_y < MAX_Y_SPEED) {
