@@ -36,7 +36,8 @@ typedef enum {
 	STATE_HOOKED,
 	STATE_FLYING,
 	STATE_FALL_RESPAWN,
-	STATE_DELIVERING_SUSHI
+	STATE_DELIVERING_SUSHI,
+	STATE_VICTORY,
 } PLAYER_STATE;
 PLAYER_STATE player_state = STATE_WALKING;
 
@@ -44,7 +45,7 @@ const UINT8 anim_idle[] = {3, 0,1,2};
 const UINT8 anim_walk[] = {4, 3, 4,5,6};
 const UINT8 anim_jump[] = {1, 7};
 const UINT8 anim_hooked[] = { 3, 7,8,10 };
-const UINT8 anim_transform[] = { 5, 11,12,13,12,13}; //Change to victory loop once THIS->anim_frame ==4
+const UINT8 anim_transform[] = { 5, 11,12,13,12,13, 13, 13, 13}; //Change to victory loop once THIS->anim_frame ==4
 const UINT8 anim_victory[] = { 2, 14,15 };
 const UINT8 anim_respawn[] = {1, 16};
 const UINT8 anim_happy[] = { 2, 17,18 };
@@ -81,6 +82,10 @@ void SetPlayerState(PLAYER_STATE state) {
 		case STATE_DELIVERING_SUSHI:
 			SetSpriteAnim(player_ptr, anim_happy, ANIMATION_SPEED);
 			break;
+
+		case STATE_VICTORY:
+			SetSpriteAnim(player_ptr, anim_transform, ANIMATION_SPEED);
+			break;
 	}
 }
 
@@ -116,6 +121,10 @@ void DeliverSushi(Sprite* client) BANKED {
 	cached_state = player_state;
 	cached_anim = player_ptr->anim_data;
 	SetPlayerState(STATE_DELIVERING_SUSHI);
+}
+
+void ShowVictoryAnim() BANKED {
+	SetPlayerState(STATE_VICTORY);
 }
 
 void START() {
@@ -323,9 +332,16 @@ void UpdateDeliveringSushi() {
 	if(deliver_countdown == 0) {
 		CheckLevelComplete();
 		
-		//SetPlayerState(STATE_FLYING);
-		player_state = cached_state;
-		SetSpriteAnim(player_ptr, cached_anim, ANIMATION_SPEED);
+		if(player_state == STATE_DELIVERING_SUSHI) {
+			player_state = cached_state;
+			SetSpriteAnim(player_ptr, cached_anim, ANIMATION_SPEED);
+		}
+	}
+}
+
+void UpdateVictory() {
+	if(THIS->anim_frame == 4) {
+		SetSpriteAnim(THIS, anim_victory, ANIMATION_SPEED);
 	}
 }
 
@@ -345,6 +361,9 @@ void UPDATE() {
 			break;
 		case STATE_DELIVERING_SUSHI:
 			UpdateDeliveringSushi();
+			break;
+		case STATE_VICTORY:
+			UpdateVictory();
 			break;
 	}
 
