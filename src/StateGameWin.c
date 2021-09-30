@@ -41,9 +41,9 @@ void START() {
 	{
 		totalScore += highscore[i];
 	}
-	totalScore = totalScore * 100;
+	
 	PRINT_POS(2, 4);
-	Printf("SCORE:  %d  ", totalScore);	
+	Printf("SCORE:  %d00  ", totalScore);	
 }
 
 void UPDATE() {
