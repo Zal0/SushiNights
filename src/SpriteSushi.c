@@ -1,6 +1,7 @@
 #include "Banks/SetAutoBank.h"
 #include "Trig.h"
 #include "SpriteManager.h"
+#include "Sounds.h"
 
 extern Sprite* player_ptr;
 extern UINT8 sushi_collected;
@@ -32,6 +33,7 @@ void UPDATE() {
 		if(CheckCollision(THIS, player_ptr)) {
 			sushi_collected = 1;
 			TakeCollectable(THIS);
+			PlayFx(FX_PICKUP);
 			SpriteManagerRemove(THIS_IDX);
 		}
 	}

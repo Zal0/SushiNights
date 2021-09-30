@@ -40,6 +40,7 @@
   <ItemGroup>
     <ClInclude Include="include\Trig.h" />
     <ClInclude Include="include\ZGBMain.h" />
+    <ClInclude Include="src\Sounds.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />

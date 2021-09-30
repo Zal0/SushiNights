@@ -1,5 +1,6 @@
 #include "Banks/SetAutoBank.h"
 #include "SpriteManager.h"
+#include "Sounds.h"
 
 extern Sprite* player_ptr;
 extern UINT8 sushi_collected;
@@ -23,11 +24,12 @@ void START() {
 }
 
 void UPDATE() {
-	if( sushi_collected && (THIS->anim_data == anim_idle || THIS->anim_data == anim_idle_alt)) {
+	if(sushi_collected && (THIS->anim_data == anim_idle || THIS->anim_data == anim_idle_alt)) {
 		if(CheckCollision(THIS, player_ptr)) {
 			SetSpriteAnim(THIS, ANIM(anim_happy), 4);
 			sushi_collected = 0;
 			TakeCollectable(THIS);
+			PlayFx(FX_PICKUP);
 			
 			DeliverSushi(THIS);
 		}

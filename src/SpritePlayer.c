@@ -5,6 +5,7 @@
 #include "ZGBMain.h"
 #include "Scroll.h"
 #include "Print.h"
+#include "Sounds.h"
 
 Sprite* player_ptr;
 extern Sprite* hook_ptr;
@@ -156,6 +157,8 @@ void HorizontalMove() {
 
 	if(TranslateSprite(THIS, decimal_x.h, 0) != 0) {
 		speed_x = bounce_on_coll ? -speed_x : 0;
+		if(bounce_on_coll)
+			PlayFx(FX_HIT_WALL);
 	}
 	
 	decimal_x.h = 0;
@@ -177,6 +180,7 @@ void UpdateWalk() {
 	
 	if(KEY_TICKED(J_A)){
 		SetPlayerState(STATE_FLYING);
+		PlayFx(FX_JUMP);
 		speed_y = -JUMP_SPEED;
 		check_key_released_on_jump = 1;
 		bounce_on_coll = 0;
@@ -259,6 +263,7 @@ void UpdateHooked() {
 			hook_speed = -hook_speed; //Bounce
 			hook_radius.w -= rad_incr; //Cancel radius increment
 			hook_ang = cached_ang; //Canel ang
+			PlayFx(FX_HIT_WALL);
 		}
 	}
 }

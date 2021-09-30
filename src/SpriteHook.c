@@ -7,6 +7,7 @@
 #include "Scroll.h"
 #include<string.h>
 #include "Keys.h"
+#include "Sounds.h"
 
 extern UINT8 next_oam_idx;
 extern UINT8* oam;
@@ -98,6 +99,7 @@ void UPDATE() {
 					} else {
 						data->hooked = 1;
 						HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
+						PlayFx(FX_HIT);
 					}
 				} 
 			}
