@@ -39,7 +39,7 @@ const struct MapInfoBanked levels[] = {
 	BANKED_MAP(level01, 30),
 	BANKED_MAP(level02, 45),
 	BANKED_MAP(level03, 60),
-	BANKED_MAP(level04, 60),
+	BANKED_MAP(level04, 70),
 	BANKED_MAP(level05, 80),
 	BANKED_MAP(level06, 80),
 	BANKED_MAP(maikel1, 100),
