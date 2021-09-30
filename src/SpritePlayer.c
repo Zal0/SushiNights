@@ -367,7 +367,7 @@ void UPDATE() {
 			break;
 	}
 
-	if(KEY_TICKED(J_B) && player_state != STATE_FALL_RESPAWN && player_state != STATE_DELIVERING_SUSHI && !hook_ptr) {
+	if(KEY_TICKED(J_B) && player_state != STATE_FALL_RESPAWN && player_state != STATE_DELIVERING_SUSHI && player_state != STATE_VICTORY && player_state != STATE_FALL_RESPAWN && !hook_ptr) {
 		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
 	}
 }
