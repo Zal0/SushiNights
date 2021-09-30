@@ -119,6 +119,7 @@ void START() {
 	scroll_h_border = 1 << 3;
 	InitWindow(0, 0, BANK(window), &window);
 	RefreshSushies();
+	PRINT(19 - num_clients - 6, 0, "CLIENTS");
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
 

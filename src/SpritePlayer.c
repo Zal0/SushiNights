@@ -35,6 +35,7 @@ typedef enum {
 	STATE_HOOKED,
 	STATE_FLYING,
 	STATE_FALL_RESPAWN,
+	STATE_DELIVERING_SUSHI
 } PLAYER_STATE;
 PLAYER_STATE player_state = STATE_WALKING;
 
@@ -75,6 +76,10 @@ void SetPlayerState(PLAYER_STATE state) {
 			decimal_y.w = 0;
 			SetSpriteAnim(player_ptr, anim_respawn, ANIMATION_SPEED);
 			break;
+
+		case STATE_DELIVERING_SUSHI:
+			SetSpriteAnim(player_ptr, anim_happy, ANIMATION_SPEED);
+			break;
 	}
 }
 
@@ -86,6 +91,27 @@ void HookPlayer(UINT16 x, UINT16 y, INT8 ang, UINT8 radius) BANKED {
 	hook_speed = 0;
 
 	SetPlayerState(STATE_HOOKED);
+}
+
+extern UINT8 clients_collected;
+void CheckLevelComplete() BANKED;
+void RefreshSushies() BANKED;
+UINT8 deliver_countdown;
+PLAYER_STATE cached_state;
+UINT8* cached_anim;
+void DeliverSushi(Sprite* client) BANKED {
+	clients_collected ++;
+	RefreshSushies();
+
+	deliver_countdown = 60;
+	
+	if(hook_ptr && player_state != STATE_HOOKED) {
+		//RetireHook(hook_ptr, hook_ang.h, hook_radius.w >> 1);
+		SpriteManagerRemoveSprite(hook_ptr);
+	}
+	cached_state = player_state;
+	cached_anim = player_ptr->anim_data;
+	SetPlayerState(STATE_DELIVERING_SUSHI);
 }
 
 void START() {
@@ -284,6 +310,17 @@ void UpdateFallRespawn() {
 		SetPlayerState(STATE_WALKING);
 }
 
+void UpdateDeliveringSushi() {
+	deliver_countdown --;
+	if(deliver_countdown == 0) {
+		CheckLevelComplete();
+		
+		//SetPlayerState(STATE_FLYING);
+		player_state = cached_state;
+		SetSpriteAnim(player_ptr, cached_anim, ANIMATION_SPEED);
+	}
+}
+
 void UPDATE() {
 	switch(player_state) {
 		case STATE_WALKING:
@@ -298,9 +335,12 @@ void UPDATE() {
 		case STATE_FALL_RESPAWN:
 			UpdateFallRespawn();
 			break;
+		case STATE_DELIVERING_SUSHI:
+			UpdateDeliveringSushi();
+			break;
 	}
 
-	if(player_state != STATE_FALL_RESPAWN && !hook_ptr && KEY_TICKED(J_B)) {
+	if(KEY_TICKED(J_B) && player_state != STATE_FALL_RESPAWN && player_state != STATE_DELIVERING_SUSHI && !hook_ptr) {
 		SpriteManagerAdd(SpriteHook, THIS->x, THIS->y);
 	}
 }

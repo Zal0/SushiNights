@@ -96,8 +96,8 @@ void UPDATE() {
 							data->dist = 128 - data->dist;
 						}
 					} else {
-						HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 						data->hooked = 1;
+						HookPlayer(THIS->x, THIS->y, data->ang, radius.l);
 					}
 				} 
 			}

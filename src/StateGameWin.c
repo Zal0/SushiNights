@@ -6,7 +6,7 @@
 #include "SpriteManager.h"
 #include "Print.h"
 
-IMPORT_TILES(font);
+IMPORT_TILES(blackfont);
 IMPORT_MAP(victory);
 extern UINT8 anim_idle_menu[];
 
@@ -30,7 +30,7 @@ void START() {
 	sprite = SpriteManagerAdd(SpritePlayerMenu, 140, 42);
 	PlayerMenuSetAnim(sprite, 2);
 	
-	INIT_FONT(font, PRINT_BKG);
+	INIT_FONT(blackfont, PRINT_BKG);
 	PRINT(6, 13, " YOU WIN");
 }
 
