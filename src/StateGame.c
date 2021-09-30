@@ -125,7 +125,7 @@ void START() {
 
 	
 
-	PRINT(19 - num_clients - 6, 0, "CLIENTS");
+	PRINT(19 - num_clients - 10, 0, "DELIVERIES");
 	SHOW_WIN;
 	//INIT_CONSOLE(font, 3, 2);
 
