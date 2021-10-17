@@ -135,7 +135,7 @@ void START() {
 
 	INIT_FONT(font, PRINT_WIN);
 	WX_REG = 7;
-	WY_REG = 136;
+	SetWindowY(136);
 	scroll_h_border = 1 << 3;
 	InitWindow(0, 0, BANK(window), &window);
 	RefreshSushies();
