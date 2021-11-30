@@ -14,8 +14,8 @@ extern UINT8 rope_length;
 void RetireHook(Sprite* hook, INT8 ang, INT8 radius) BANKED;
 
 //Walk
-UINT16 safe_jump_x;
-UINT16 safe_jump_y;
+INT16 safe_jump_x;
+INT16 safe_jump_y;
 
 //Hooked
 fixed hook_radius;
@@ -313,14 +313,14 @@ void UpdateFlying() {
 }
 
 void UpdateFallRespawn() {
-	if(THIS->x > safe_jump_x)
+	if((INT16)THIS->x > safe_jump_x)
 		THIS->x --;
-	else if(THIS->x < safe_jump_x)
+	else if((INT16)THIS->x < safe_jump_x)
 		THIS->x ++;
 
-	if(THIS->y > safe_jump_y)
+	if((INT16)THIS->y > safe_jump_y)
 		THIS->y --;
-	else if(THIS->y < safe_jump_y)
+	else if((INT16)THIS->y < safe_jump_y)
 		THIS->y ++;
 
 	if(THIS->x == safe_jump_x && THIS->y == safe_jump_y)
