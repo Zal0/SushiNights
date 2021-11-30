@@ -109,6 +109,7 @@ UINT8 deliver_countdown;
 PLAYER_STATE cached_state;
 UINT8* cached_anim;
 void DeliverSushi(Sprite* client) BANKED {
+	client;
 	clients_collected ++;
 	RefreshSushies();
 
