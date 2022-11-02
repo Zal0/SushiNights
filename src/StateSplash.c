@@ -21,12 +21,12 @@ void START() {
 	Sprite* sprite = SpriteManagerAdd(SpritePlayerMenu, 122,56);
 	PlayerMenuSetAnim(sprite, 0);
 	sprite->mirror = V_MIRROR;
+	
 	INIT_FONT(blackfont, PRINT_BKG);
 	PRINT(0, 13, " PRESS START ");	
 	PRINT(1, 16, "MONIS GAMES");
 	PRINT(2, 17, "GBCOMPO21");
 	PlayMusic(start, 1);
-
 }
 
 void UPDATE() {

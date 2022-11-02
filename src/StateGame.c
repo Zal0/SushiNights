@@ -133,15 +133,13 @@ void START() {
 
 	InitRope();
 
-	INIT_FONT(font, PRINT_WIN);
-	WX_REG = 7;
-	SetWindowY(136);
-	scroll_h_border = 1 << 3;
-	InitWindow(0, 0, BANK(window), &window);
+	INIT_HUD(window);
 	RefreshSushies();
-	PRINT(19 - num_clients - 6, 0, "CLIENTS");
-	SHOW_WIN;
+	
 	//INIT_CONSOLE(font, 3, 2);
+	INIT_FONT(font, PRINT_WIN);
+	PRINT(19 - num_clients - 6, 0, "CLIENTS");
+	
 
 	NR52_REG = 0x80;
 	NR51_REG = 0xFF;
